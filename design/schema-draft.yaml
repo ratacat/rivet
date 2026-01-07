@@ -16,11 +16,8 @@ example_entry:
       - "Must handle Y"
 
     decisions:                      # design rationale - the WHY
-      - statement: "Use Redis for session storage"
-        rationale: "Need sub-ms latency, team has Redis experience"
-        replaces: null              # what decision this supplanted, if any
-      - statement: "Async-first API design"
-        rationale: "Preparing for high-concurrency workloads"
+      - "Redis for session storage - need sub-ms latency"
+      - "Async-first API for high-concurrency workloads"
 
     symbols:                        # locked code names
       - ExampleSystem
@@ -42,9 +39,8 @@ example_entry:
 rules:
   - description is required, max ~100 words
   - requirements are atomic single sentences (the WHAT)
-  - decisions capture design rationale (the WHY) - statement + reasoning
-  - decisions can note what they replaced, enabling evolution tracking
-  - when a decision is fully supplanted, remove it (stay true to "what IS")
+  - decisions are single statements capturing the WHY
+  - when a decision is supplanted, remove it (stay true to "what IS")
   - symbols are locked once set, changes require explicit migration
   - status transitions: active -> deprecated -> (deleted from file)
   - replacing:X status means this is actively replacing X
