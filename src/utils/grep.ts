@@ -1,2 +1,2 @@
-// ABOUTME: Search codebase for symbols and patterns
-// ABOUTME: Used by check command to find symbol usage
+// ABOUTME: Search codebase for terms and patterns
+// ABOUTME: Used by check command to find term usage

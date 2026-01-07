@@ -7,8 +7,8 @@
 //   rivet context Router Config - multiple systems
 
 // Output includes:
-//   - Project name, purpose, design values
-//   - Each system's description, requirements, symbols
+//   - Project name, purpose, glossary
+//   - Each system's description, requirements, decisions, terms
 //   - Relationships (depends_on, used_by, differs_from)
 //   - Status (active, deprecated, replacing)
 //   - Layout rules if defined

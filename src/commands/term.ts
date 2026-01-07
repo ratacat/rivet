@@ -7,9 +7,8 @@
 //   rivet term delete <term>                - remove a term from glossary
 //   rivet term list                         - show all glossary terms
 
-// DIFFERENCE FROM 'rivet lock':
-//   - 'term' = project-wide glossary (concepts, jargon, conventions)
-//   - 'lock' = code identifiers locked to a specific system (Router.createRouter)
+// NOTE: System-specific terms are managed via 'rivet system edit +term <name> [context]'
+// Glossary terms (here) are project-wide concepts not tied to any specific system.
 
 // The 'previously' field on renamed terms is temporary - removed once the old
 // term is purged from the codebase.
