@@ -42,6 +42,14 @@ constraints:
   - Smaller is better - excessive entries create more noise than signal
   - Systems only, not every method/interface
 
+what_rivet_prevents:
+  premature_reification: |
+    When casual language gets formalized before agreement. Someone says
+    "we should cache this" and suddenly there's a Cache class. Or a verb
+    ("we lock terms") becomes a noun (a Lock command). Rivet's locked
+    terminology prevents this drift by making naming decisions explicit
+    and agreed-upon before they enter the codebase.
+
 key_requirement: |
   At the end of a context session, ALL changes must be capturable in a single
   rivet sync command. Systems, requirements, decisions, terms, glossary -

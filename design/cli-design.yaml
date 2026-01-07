@@ -7,6 +7,7 @@ principles:
   - Minimal typing for common operations
   - Auto-commit each change for granular undo
   - Single tool use, multiple commits when batching
+  - Pure CLI - no interactive modes or $EDITOR
 
 auto_commit:
   description: |
@@ -24,19 +25,23 @@ auto_commit:
     When using rivet sync with multiple operations, each operation gets its
     own commit in sequence. One tool use, multiple commits.
 
-    Example: rivet sync --add Router "..." --deprecate OldRouter
-    Creates two commits:
-      1. "rivet: add Router"
-      2. "rivet: deprecate OldRouter"
-
-    Each can be reverted individually with git revert.
-
   flags:
     --no-commit: "Skip auto-commit for this operation"
 
+# Schema reference: see schema-draft.yaml for system fields
+# Editable fields: description, requirement, decision, term, status,
+#                  depends_on, used_by, differs_from
+
 commands:
 
-  # Context / Reading
+  #============================================================================
+  # STANDALONE COMMANDS
+  #============================================================================
+
+  init:
+    usage: "rivet init [--minimal]"
+    description: "Initialize Rivet in a project."
+
   context:
     usage: "rivet context [system...]"
     description: |
@@ -47,44 +52,31 @@ commands:
       - "rivet context Router       # just Router"
       - "rivet context Router Config # multiple systems"
 
-  # Core operations (each auto-commits)
-  init:
-    usage: "rivet init [--minimal]"
-    description: "Initialize Rivet in a project. Interactive or minimal."
-
-  add:
-    usage: "rivet add <name> <description>"
-    description: "Add a new system"
-    commit_message: "rivet: add <name>"
-
-  show:
-    usage: "rivet show <name>"
-    description: "Show details of one system (no commit, read-only)"
-
-  list:
-    usage: "rivet list [--status <status>]"
-    description: "List all systems (no commit, read-only)"
-
-  require:
-    usage: "rivet require <system> <statement>"
-    description: "Add requirement to a system (the WHAT)"
-    commit_message: "rivet: require <system> '<statement>'"
-
-  decide:
-    usage: "rivet decide <system> <statement>"
-    description: "Add a design decision to a system (the WHY)"
-    commit_message: "rivet: decide <system> '<statement>'"
-
-  lock:
-    usage: "rivet lock <system> <identifier>"
+  sync:
+    usage: "rivet sync [operations...]"
     description: |
-      Lock a code identifier to a specific system. These are function names,
-      class names, variable names - locked to that system's namespace.
-      For project-wide glossary terms, use 'rivet term define'.
-    commit_message: "rivet: lock <system> <identifier>"
+      Run multiple operations in one command. Each operation gets its own
+      commit for granular undo. This is THE command for end-of-session updates -
+      capture all systems, requirements, decisions, terms, and glossary in one call.
     examples:
-      - "rivet lock Router createRouter      # createRouter belongs to Router"
-      - "rivet lock Config loadConfig        # loadConfig belongs to Config"
+      - "rivet sync --system-add Router 'handles routing' --system-deprecate OldRouter"
+      - "rivet sync --system-add Foo 'desc' --system-require Foo 'must do X'"
+      - "rivet sync --term-define vibe_coding 'AI handles implementation'"
+    flags:
+      --system-add: "<name> <description>"
+      --system-require: "<system> <statement>"
+      --system-decide: "<system> <statement>"
+      --system-edit: "<system> <field> <value>"
+      --system-link: "<system> --depends-on|--used-by <other>"
+      --system-deprecate: "<name> [--replaced-by <new>]"
+      --term-define: "<term> <definition>"
+      --term-rename: "<old> <new>"
+
+  check:
+    usage: "rivet check"
+    description: |
+      Grep codebase for terms, report matches/mismatches.
+      Also cleans up 'previously' fields for terms no longer in codebase.
 
   purge:
     usage: "rivet purge <term>"
@@ -95,7 +87,69 @@ commands:
     examples:
       - "rivet purge oldFunctionName    # AI removes/replaces all occurrences"
 
-  # Term management (subcommands for project-wide glossary)
+  harvest:
+    usage: "rivet harvest"
+    description: |
+      Bootstrap Rivet from an existing project. Scans codebase for systems,
+      parses AI transcripts for requirements/decisions, generates draft rivet.yaml.
+
+  #============================================================================
+  # SYSTEM SUBCOMMANDS: rivet system <subcommand>
+  #============================================================================
+
+  system_add:
+    usage: "rivet system add <name> <description>"
+    description: "Add a new system"
+    commit_message: "rivet: system add <name>"
+
+  system_show:
+    usage: "rivet system show <name>"
+    description: "Show details of one system (read-only)"
+
+  system_list:
+    usage: "rivet system list [--status <status>]"
+    description: "List all systems (read-only)"
+
+  system_edit:
+    usage: "rivet system edit [<system>] [<field>] [+|-]<value>"
+    description: |
+      Edit a system's fields. Pure CLI, no interactive mode.
+      Without args, shows available fields from schema.
+      With just system name, shows current values.
+    examples:
+      - "rivet system edit                              # show editable fields"
+      - "rivet system edit Router                       # show Router's values"
+      - "rivet system edit Router description 'new desc'"
+      - "rivet system edit Router +requirement 'must do X'"
+      - "rivet system edit Router -requirement 'old req'"
+      - "rivet system edit Router +decision 'async-first'"
+      - "rivet system edit Router +term createRouter"
+      - "rivet system edit Router status deprecated"
+    fields:
+      description: "string (replace)"
+      requirement: "list (+add / -remove)"
+      decision: "list (+add / -remove)"
+      term: "list (+add / -remove) - locked code identifiers"
+      status: "enum: active | deprecated | replacing:<system>"
+      depends_on: "list (+add / -remove)"
+      used_by: "list (+add / -remove)"
+      differs_from: "list (+add / -remove)"
+    commit_message: "rivet: system edit <system> <field>"
+
+  system_link:
+    usage: "rivet system link <system> --depends-on|--used-by <other>"
+    description: "Add relationship between systems"
+    commit_message: "rivet: system link <system> -> <other>"
+
+  system_deprecate:
+    usage: "rivet system deprecate <system> [--replaced-by <new>]"
+    description: "Mark system as deprecated"
+    commit_message: "rivet: system deprecate <system>"
+
+  #============================================================================
+  # TERM SUBCOMMANDS: rivet term <subcommand> (project-wide glossary)
+  #============================================================================
+
   term_define:
     usage: "rivet term define <term> <definition>"
     description: |
@@ -104,14 +158,14 @@ commands:
     commit_message: "rivet: term define <term>"
     examples:
       - "rivet term define vibe_coding 'AI handles implementation while human guides'"
-      - "rivet term define harvest 'extracting requirements from transcripts'"
+      - "rivet term define premature_reification 'casual language formalized before agreement'"
 
   term_rename:
     usage: "rivet term rename <old> <new>"
     description: |
       Rename a glossary term. Updates rivet.yaml and adds a 'previously' field
       to help AI understand the transition. The 'previously' field is temporary -
-      removed once the old term is purged from the codebase.
+      removed by 'rivet check' once the old term is purged from the codebase.
     commit_message: "rivet: term rename <old> → <new>"
 
   term_delete:
@@ -123,37 +177,10 @@ commands:
     usage: "rivet term list"
     description: "Show all project-wide glossary terms."
 
-  link:
-    usage: "rivet link <system> --depends-on|--used-by <other>"
-    description: "Add relationship between systems"
-    commit_message: "rivet: link <system> -> <other>"
+  #============================================================================
+  # VIEW COMMANDS (read-only)
+  #============================================================================
 
-  deprecate:
-    usage: "rivet deprecate <system> [--replaced-by <new>]"
-    description: "Mark system as deprecated, optionally specify replacement"
-    commit_message: "rivet: deprecate <system> [replaced by <new>]"
-
-  # Batch operations
-  sync:
-    usage: "rivet sync [operations...]"
-    description: |
-      Run multiple operations in one command. Each operation gets its own
-      commit for granular undo. This is THE command for end-of-session updates -
-      capture all systems, requirements, decisions, terms, and glossary in one call.
-    examples:
-      - "rivet sync --add Router 'handles routing' --deprecate OldRouter"
-      - "rivet sync --add Foo 'desc' --require Foo 'must do X' --term Foo createFoo"
-      - "rivet sync --define vibe_coding 'AI handles implementation' --decide Router 'async-first for scale'"
-    flags:
-      --add: "<name> <description>"
-      --require: "<system> <statement>"
-      --decide: "<system> <statement>"
-      --lock: "<system> <identifier>"
-      --term-define: "<term> <definition>"
-      --link: "<system> --depends-on|--used-by <other>"
-      --deprecate: "<name> [--replaced-by <new>]"
-
-  # Views (read-only, no commits)
   arch:
     usage: "rivet arch"
     aliases: ["architecture"]
@@ -165,12 +192,7 @@ commands:
 
   terms:
     usage: "rivet terms"
-    description: "Show all locked terms - both system terms and project glossary"
-
-  # Checking (read-only, no commits)
-  check:
-    usage: "rivet check"
-    description: "Grep codebase for terms, report matches/mismatches"
+    description: "Show all terms - both system-level and project glossary"
 
   orphans:
     usage: "rivet orphans"
@@ -182,10 +204,13 @@ commands:
       Show provenance of requirements/decisions via git history.
       When was it added? By whom? In what context?
     examples:
-      - "rivet history Router                    # all changes to Router"
+      - "rivet history Router                         # all changes to Router"
       - "rivet history --requirement 'must handle X'  # when was this added?"
 
-  # Layout (optional codebase organization)
+  #============================================================================
+  # LAYOUT (optional codebase organization)
+  #============================================================================
+
   layout:
     usage: "rivet layout [flavor]"
     description: "Show current layout, or set to a flavor"
@@ -197,6 +222,6 @@ commands:
 # Workflow summary:
 # 1. rivet context → AI gets context
 # 2. Conversation about changes, naming negotiation
-# 3. AI runs commands (direct or sync)
+# 3. AI runs commands (rivet system/term or rivet sync for batch)
 # 4. Each change auto-committed
 # 5. Don't like something? git revert the specific commit
