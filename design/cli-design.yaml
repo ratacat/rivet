@@ -82,6 +82,16 @@ commands:
       provides AI with instructions to replace. Updates rivet.yaml terms.
     commit_message: "rivet: purge <old-term> → <new-term>"
 
+  define:
+    usage: "rivet define <term> <definition>"
+    description: |
+      Add a project-level glossary term. These are locked definitions not
+      tied to any system - concepts, jargon, vocabulary for this codebase.
+    commit_message: "rivet: define <term>"
+    examples:
+      - "rivet define vibe_coding 'AI handles implementation while human guides'"
+      - "rivet define harvest 'extracting requirements from transcripts'"
+
   link:
     usage: "rivet link <system> --depends-on|--used-by <other>"
     description: "Add relationship between systems"
@@ -120,7 +130,7 @@ commands:
 
   terms:
     usage: "rivet terms"
-    description: "Show all locked terminology/symbols"
+    description: "Show all locked terms - both system terms and project glossary"
 
   # Checking (read-only, no commits)
   check:
@@ -130,6 +140,15 @@ commands:
   orphans:
     usage: "rivet orphans"
     description: "Find orphaned requirements (parent system deprecated/removed)"
+
+  history:
+    usage: "rivet history [system] [--requirement <req>] [--decision <dec>]"
+    description: |
+      Show provenance of requirements/decisions via git history.
+      When was it added? By whom? In what context?
+    examples:
+      - "rivet history Router                    # all changes to Router"
+      - "rivet history --requirement 'must handle X'  # when was this added?"
 
   # Layout (optional codebase organization)
   layout:

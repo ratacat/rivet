@@ -24,6 +24,14 @@ schema_draft:
       # Needs a name for this concept - TBD
       organization: null  # or: "standard-ts" or custom definition
 
+    glossary:
+      # Project-level locked terms - not tied to any system
+      # Concepts, definitions, vocabulary specific to this codebase
+      # These are "when we say X, we mean Y" definitions
+      vibe_coding: "Development style where AI handles implementation details while human guides direction"
+      harvest: "The process of extracting requirements and decisions from AI transcripts"
+      system: "A cohesive bundle of code forming a single mental model with clear boundaries"
+
   systems:
     # References to individual system entries
     # Each system has: description, requirements, symbols, relationships
@@ -35,3 +43,6 @@ schema_draft:
 # The project section is new - gives AI context before diving into systems
 # Design values help AI make judgment calls that match user's style
 # Conventions (optional) provide structure rules
+# Glossary locks project-wide vocabulary - terms that aren't system-specific
+#   but have specific meaning in this codebase. Use for concepts, jargon,
+#   conventions that need consistent interpretation.
