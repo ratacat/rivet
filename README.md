@@ -1,36 +1,35 @@
 # Rivet
 
-**Lock your language to your code.**
-
-A rivet is a permanent fastener. It locks two layers together without requiring ongoing attention. It either holds or it doesn't. No maintenance. No drift. No cruft.
-
-Rivet does the same thing for your codebase: it locks the **linguistic layer** (requirements, decisions, terminology) to the **code layer** (implementation). Once fastened, words mean what you said they mean.
+> "Language is the liquid we're all dissolved in."
+> — Modest Mouse
 
 ---
 
-## Why This Matters Now
+In the age of AI, the purpose of words in code is changing.
 
-In the age of AI-assisted development, words are first-class citizens.
+It used to be that naming conventions only mattered for humans reading your code—your future self, your teammates, the next maintainer. But now there's another reader: the AI. And the linguistic layer of a codebase is suddenly much more important than it was.
 
-Previously, naming only mattered for humans: "What happens when someone else reads this code?" Now there's a new reader—the AI. And AIs take language literally in ways humans don't.
-
-The scope has expanded. Your terminology now determines whether an AI hallucinates, drifts, or stays grounded. Rivet gives you control over that.
+The tooling hasn't caught up yet.
 
 ---
 
-## Design Principles
+Rivet is a small tool that locks your terminology to your code. A rivet is a permanent fastener—it holds two layers together without needing attention. It either holds or it doesn't.
 
-| Principle | What It Means |
-|-----------|---------------|
-| **Passive** | Works without intervention. You shouldn't notice it's there. |
-| **Zero Maintenance** | Set it and forget it. If it needs upkeep, we've failed. |
-| **Incapable of Cruft** | Structurally prevents accumulation. Discrete units, not prose. |
-
-Rivet is not documentation. It's disambiguation. Only things that cause confusion deserve entries. Smaller is better.
+That's what this does. You define the systems in your codebase, the requirements they fulfill, the decisions behind them, the terms that matter. Rivet keeps them fastened to the code. They don't drift. They don't accumulate. They mean what you said they mean.
 
 ---
 
-## What It Looks Like
+Some principles we're trying to hold:
+
+**Passive.** You shouldn't have to think about Rivet. It's there when you need it.
+
+**Zero maintenance.** If it requires upkeep to stay useful, we've failed.
+
+**Incapable of cruft.** This is the hard one. Give an AI any leash and it runs with it—generating too much of something until it loses meaning. Rivet is structurally small. Discrete units. Only things that cause confusion deserve entries.
+
+---
+
+Here's what it looks like:
 
 ```yaml
 # rivet.yaml
@@ -45,7 +44,6 @@ project:
 systems:
   Router:
     description: "Handles URL routing and navigation"
-    status: active
 
     requirements:
       - "Must support nested routes"
@@ -56,59 +54,31 @@ systems:
 
     terms:
       createRouter: "factory function - use instead of new Router()"
-      useRouter: "React hook for accessing router in components"
+      useRouter: "React hook for router context"
 ```
 
 ---
 
-## Quick Start
-
 ```bash
-# Initialize in your project
 rivet init
-
-# Add a system
 rivet system add Router "Handles URL routing"
-
-# Add requirements and decisions
 rivet system edit Router +requirement "Must support nested routes"
-rivet system edit Router +decision "Async-first for scale"
-
-# Lock terminology
 rivet system edit Router +term createRouter "factory function"
-
-# Output context for AI
 rivet context
 ```
 
-Every command auto-commits. Don't like a change? `git revert`.
+Every command auto-commits. Don't like something? `git revert`.
 
 ---
 
-## The Rivet Metaphor
+**Commands**
 
-> "Language is the liquid we're all dissolved in."
+`rivet system add|show|list|edit|link|deprecate`
 
-Companies like SpaceX control vocabulary—no new acronym without approval. Not bureaucracy; recognition that shared meaning enables shared work.
+`rivet term define|rename|delete|list`
 
-Rivet brings that discipline to your codebase. Lock the terms that matter. Let the rest stay fluid.
-
----
-
-## Commands
-
-**Systems:** `rivet system add|show|list|edit|link|deprecate`
-
-**Glossary:** `rivet term define|rename|delete|list`
-
-**Context:** `rivet context [system...]` — output for AI consumption
-
-**Batch:** `rivet sync [--flags...]` — capture entire session in one command
-
-**Utilities:** `rivet check` · `rivet purge` · `rivet harvest`
+`rivet context` · `rivet sync` · `rivet check` · `rivet harvest`
 
 ---
 
-## License
-
-MIT
+MIT License
