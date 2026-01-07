@@ -1,10 +1,10 @@
-// ABOUTME: rivet prime [system...] - output context for AI consumption
+// ABOUTME: rivet context [system...] - output context for AI consumption
 // ABOUTME: Dumps project info, systems, requirements, relationships
 
 // Usage:
-//   rivet prime              - all systems
-//   rivet prime Router       - just Router
-//   rivet prime Router Config - multiple systems
+//   rivet context              - all systems
+//   rivet context Router       - just Router
+//   rivet context Router Config - multiple systems
 
 // Output includes:
 //   - Project name, purpose, design values

@@ -37,15 +37,15 @@ auto_commit:
 commands:
 
   # Context / Reading
-  prime:
-    usage: "rivet prime [system...]"
+  context:
+    usage: "rivet context [system...]"
     description: |
       Output context for AI consumption. Dumps project info, systems,
       requirements, relationships.
     examples:
-      - "rivet prime              # all systems"
-      - "rivet prime Router       # just Router"
-      - "rivet prime Router Config # multiple systems"
+      - "rivet context              # all systems"
+      - "rivet context Router       # just Router"
+      - "rivet context Router Config # multiple systems"
 
   # Core operations (each auto-commits)
   init:
@@ -134,7 +134,7 @@ commands:
       - "rivet layout check          # verify codebase matches layout"
 
 # Workflow summary:
-# 1. rivet prime → AI gets context
+# 1. rivet context → AI gets context
 # 2. Conversation about changes, naming negotiation
 # 3. AI runs commands (direct or sync)
 # 4. Each change auto-committed

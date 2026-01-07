@@ -3,21 +3,21 @@
 
 workflow:
   summary: |
-    1. rivet prime → AI gets context
+    1. rivet context → AI gets context
     2. Conversation about changes, naming negotiation
     3. AI runs commands (direct or rivet sync)
     4. Each change auto-committed
     5. Don't like something? git revert the specific commit
 
-  step_1_prime:
+  step_1_context:
     when: "Before coding, refactoring, or exploring"
-    command: "rivet prime"
+    command: "rivet context"
     what_it_does: |
       Outputs all project context: systems, requirements, relationships,
       design values. AI ingests this before starting work.
     filtering: |
       Can filter to specific systems:
-        rivet prime Router Config
+        rivet context Router Config
       Only outputs those systems' context.
 
   step_2_conversation:
@@ -50,7 +50,7 @@ workflow:
       Don't like a change? git revert the specific commit.
       Each operation is individually revertable.
 
-when_to_prime:
+when_to_get_context:
   - Before designing or planning a new system
   - Before coding (in general)
   - Before refactoring or changing existing code
@@ -76,7 +76,7 @@ ai_vigilance:
     be added to Rivet?"
 
 outputs:
-  prime: "Full context dump for AI consumption"
+  context: "Full context dump for AI consumption"
   arch: "Architecture overview - systems and relationships"
   reqs: "All requirements, or filtered by system"
   terms: "All locked terminology/symbols"
