@@ -6,6 +6,19 @@ primary_goal: |
   specifically around linguistic noise and drift, reducing confusion
   and hallucinations.
 
+philosophy: |
+  Rivet is fundamentally concerned with what IS - the current state of
+  the architecture, the current names, the current requirements. Not what
+  was (historical cruft) or what should be (aspirational docs).
+
+  History matters only insofar as it clarifies what actually is. A
+  deprecation note exists to explain the current state ("this is being
+  replaced"), not to preserve archaeology. When something is gone, it's
+  gone from Rivet.
+
+  This keeps Rivet small, accurate, and useful. It's a living snapshot,
+  not a museum.
+
 secondary_goals:
   architecture_tracking: |
     Maintain living architecture definitions that stay current as code
