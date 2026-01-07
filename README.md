@@ -1,13 +1,10 @@
 # Rivet
 
-> "Language is the liquid we're all dissolved in."
-> — Modest Mouse
+<p align="center"><em>"Language is the liquid we're all dissolved in."</em><br>— Modest Mouse</p>
 
----
+The work of language in programming is rapidly changing.
 
-In the age of AI, the purpose of words in code is changing.
-
-It used to be that naming conventions only mattered for humans reading your code—your future self, your teammates, the next maintainer. But now there's another reader: the AI. And the linguistic layer of a codebase is suddenly much more important than it was.
+It used to be that language only mattered for humans reading your code. Today, with the rise of semi-intelligent AI systems, the linguistic layer of software is suddenly much more involved.
 
 The tooling hasn't caught up yet.
 
