@@ -56,6 +56,36 @@ secondary_goals:
     requirements, look at the system, and verify they match. That's
     high-value stuff worth preserving.
 
+design_principles:
+  passive: |
+    Rivet should be completely passive. You should be able to use it without
+    even noticing it or having to maintain it. It's there when you need it,
+    invisible when you don't.
+
+  zero_maintenance: |
+    Set it and forget it. No upkeep required. If Rivet requires ongoing
+    attention to stay useful, we've failed.
+
+  incapable_of_cruft: |
+    By nature, Rivet cannot accumulate meaningless content. This is the
+    hardest constraint and the most important. AIs given any leash will
+    run with it, creating too much of something until it loses meaning.
+
+    Mechanisms that prevent cruft:
+    - Discrete units (rivets, not rivers) - no prose, no paragraphs
+    - Tight coupling that breaks visibly - a rivet to deleted code is obviously broken
+    - "What IS" philosophy - old stuff gets removed, not archived
+    - Bounded by nature - can't grow unbounded like TODO lists or comments
+    - Only things that cause confusion deserve entries
+
+  the_rivet_metaphor: |
+    A rivet is a permanent fastener that locks two layers together without
+    requiring ongoing attention. It either holds or it doesn't. There's no
+    "extra rivet material" accumulating.
+
+    Rivet locks the linguistic layer (requirements, semantics, vocabulary)
+    to the code layer (implementation). Once fastened, it doesn't drift.
+
 constraints:
   - This is a disambiguation system, not a documentation system
   - Only things that cause confusion deserve entries
