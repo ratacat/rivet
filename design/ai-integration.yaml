@@ -1,0 +1,83 @@
+# ABOUTME: When and how AI should use Rivet
+# ABOUTME: Triggers, workflows, and vigilance patterns
+
+workflow:
+  summary: |
+    1. rivet prime → AI gets context
+    2. Conversation about changes, naming negotiation
+    3. AI runs commands (direct or rivet sync)
+    4. Each change auto-committed
+    5. Don't like something? git revert the specific commit
+
+  step_1_prime:
+    when: "Before coding, refactoring, or exploring"
+    command: "rivet prime"
+    what_it_does: |
+      Outputs all project context: systems, requirements, relationships,
+      design values. AI ingests this before starting work.
+    filtering: |
+      Can filter to specific systems:
+        rivet prime Router Config
+      Only outputs those systems' context.
+
+  step_2_conversation:
+    description: |
+      Naming negotiation happens here, in conversation. AI proposes names,
+      user agrees or counters. No commands run until agreement.
+    example: |
+      AI: "I'm thinking we call this NewRouter since we're replacing OldRouter"
+      User: "Nah, just call it Router. OldRouter gets deprecated."
+      AI: "Got it."
+
+  step_3_commands:
+    description: |
+      Once agreed, AI runs rivet commands. Can use individual commands
+      or batch with rivet sync.
+    single_commands:
+      - "rivet add Router 'handles URL routing'"
+      - "rivet deprecate OldRouter --replaced-by Router"
+      - "rivet require Router 'must support nested routes'"
+    batch_command: |
+      rivet sync --add Router 'handles routing' --deprecate OldRouter --replaced-by Router
+
+  step_4_auto_commit:
+    description: |
+      Each rivet command auto-commits. Batch commands create one commit
+      per operation. Git log shows granular history.
+
+  step_5_undo:
+    description: |
+      Don't like a change? git revert the specific commit.
+      Each operation is individually revertable.
+
+when_to_prime:
+  - Before designing or planning a new system
+  - Before coding (in general)
+  - Before refactoring or changing existing code
+  - Before exploring an unfamiliar codebase
+
+ai_vigilance:
+  description: |
+    AI should be permanently on the lookout for mismatches.
+    Not just when explicitly asked - always.
+
+  watch_for:
+    - Code that doesn't match its requirements
+    - Systems that don't match their terminology locks
+    - Names that drift from canonical terms
+    - Scope confusion between similar systems
+
+  on_mismatch: |
+    Surface it. "This code doesn't match the requirement 'must handle X' -
+    should we update the code or the requirement?"
+
+  on_new_system: |
+    Prompt to add to Rivet. "We're creating a new system - should this
+    be added to Rivet?"
+
+outputs:
+  prime: "Full context dump for AI consumption"
+  arch: "Architecture overview - systems and relationships"
+  reqs: "All requirements, or filtered by system"
+  terms: "All locked terminology/symbols"
+  check: "Codebase scan - symbol matches/mismatches"

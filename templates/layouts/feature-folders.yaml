@@ -1,0 +1,15 @@
+# ABOUTME: Feature folders layout
+# ABOUTME: Organize by feature/domain, not by file type
+
+name: feature-folders
+description: "Organize by feature, not by type. Each feature is self-contained."
+
+rules:
+  src/features: "Each subdirectory is a feature"
+  src/features/*/components: "Feature-specific components"
+  src/features/*/hooks: "Feature-specific hooks"
+  src/features/*/utils: "Feature-specific utilities"
+  src/features/*/types: "Feature-specific types"
+  src/shared: "Cross-feature shared code"
+  src/shared/components: "Shared UI components"
+  src/shared/utils: "Shared utilities"

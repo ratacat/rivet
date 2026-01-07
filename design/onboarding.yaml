@@ -1,0 +1,34 @@
+# ABOUTME: First-run experience and project initialization
+# ABOUTME: How users get started with Rivet
+
+first_install_experience:
+  goal: |
+    Super easy, feels good. User walks away with a useful
+    first Rivet file, not an empty template.
+
+  approach: |
+    Use Claude Code (or any AI) to walk through questions
+    about the codebase. Interactive onboarding that builds
+    the initial rivet.yaml.
+
+  questions_to_ask:
+    - What's this project called? What does it do? (project context)
+    - What are the main systems/components? (initial system list)
+    - Any naming conventions we should know about? (terminology seeds)
+    - What are the core design values? (high-level feel)
+    - How is the codebase organized? (optional structure conventions)
+
+  output: |
+    A populated rivet.yaml with:
+    - Project-level context
+    - 2-5 initial system entries
+    - Basic terminology locks
+    - Ready to use immediately
+
+non_interactive_fallback:
+  description: |
+    If user wants to skip interactive setup, just create
+    minimal rivet.yaml with project name and empty systems.
+    Can populate later.
+
+  command: "rivet init --minimal"

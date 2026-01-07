@@ -1,0 +1,41 @@
+# ABOUTME: Layout - codebase organization conventions
+# ABOUTME: Optional structure rules for file and system organization
+
+name: Layout
+
+command: "rivet layout"
+
+concept:
+  description: |
+    Optional feature: define or use a set of conventions for
+    organizing files and systems in the codebase.
+
+    Provides rules about:
+    - Where different types of files go
+    - How to name directories
+    - What structure is expected
+    - What's "cool" and what's not
+
+    Keeps things organized and clean. Gives AI guardrails
+    about where to put new code.
+
+  why_optional: |
+    Not everyone wants this. Some codebases are already organized.
+    Some people prefer flexibility. This is for people who want
+    explicit structure rules.
+
+  flavors:
+    description: |
+      Default "flavors" - common organization patterns you can
+      adopt wholesale or customize.
+
+    examples:
+      - "standard-ts" - typical TypeScript project layout
+      - "monorepo" - workspace-based organization
+      - "feature-folders" - organize by feature not type
+      - "flat" - minimal nesting, everything accessible
+
+cli:
+  show: "rivet layout"              # Show current layout rules
+  set: "rivet layout <flavor>"      # Adopt a preset layout
+  check: "rivet layout check"       # Verify codebase matches layout

@@ -1,0 +1,62 @@
+# ABOUTME: Specific failure situations this system targets
+# ABOUTME: Each situation is a problem we want to prevent
+
+situations:
+
+  scope_confusion:
+    name: "Scope confusion"
+    description: |
+      AI told to modify system X, gets confused about X's boundaries.
+      Starts building parallel system instead of modifying existing one.
+      Or changes part of existing, then starts adding new parts, mixing
+      old and new code together.
+    example: |
+      "Refactor the Router" -> AI builds NewRouter alongside Router,
+      imports get tangled, unclear which is "the real one"
+    how_terminology_helps: |
+      Entry for Router defines its scope, symbols, and what it differs_from.
+      AI has explicit boundary information before starting work.
+
+  terminology_drift:
+    name: "Terminology drift"
+    description: |
+      Names get confused, collide, or drift over time. Same concept gets
+      called different things. New thing accidentally uses name too similar
+      to existing thing. User and AI lose sync on what things are called.
+    example: |
+      User says "update the handler" meaning Router. AI doesn't connect
+      these, creates new Handler. Or building "ConfigManager" when "Config"
+      already exists and does similar things. "UserAuth" vs "AuthUser".
+    how_terminology_helps: |
+      Canonical name locked in. Symbols prevent accidental reuse.
+      differs_from field makes similar things explicit.
+
+  ghost_references:
+    name: "Ghost references"
+    description: |
+      Supposedly removed systems persisting. Old system deleted but
+      references remain - imports, type annotations, comments, tests.
+      Codebase in inconsistent state, unclear what's real.
+    example: |
+      OldRouter deleted, but 5 files still import it. Tests still reference
+      it. AI doesn't know these are stale vs intentional.
+    how_terminology_helps: |
+      status: deprecated marks things for removal. Check command can
+      grep for deprecated symbols. Replacement tracking shows what
+      should exist vs what shouldn't.
+
+  orphaned_requirements:
+    name: "Orphaned requirements"
+    description: |
+      Requirements left behind when their parent system changes. Old system
+      had requirements attached. New system gets built, old deleted, but
+      requirements weren't explicitly handled - they just vanish.
+    example: |
+      OldRouter handled edge case X. NewRouter doesn't. Nobody noticed
+      because the requirement wasn't tracked or transferred.
+    how_terminology_helps: |
+      Requirements anchored to terms. When replacing, system surfaces:
+      "OldRouter has 5 requirements - which transfer to NewRouter?"
+      Forces explicit decision rather than silent loss.
+
+# Add more situations as we encounter them

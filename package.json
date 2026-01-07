@@ -1,0 +1,20 @@
+{
+  "name": "rivet",
+  "version": "0.0.1",
+  "description": "Living architecture. Anchored requirements. Locked terminology.",
+  "main": "bin/rivet.ts",
+  "bin": {
+    "rivet": "./bin/rivet.ts"
+  },
+  "scripts": {
+    "rivet": "npx ts-node bin/rivet.ts"
+  },
+  "dependencies": {
+    "yaml": "^2.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "ts-node": "^10.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+# ABOUTME: Standard TypeScript project layout
+# ABOUTME: Common organization for TS/JS projects
+
+name: standard-ts
+description: "Typical TypeScript project layout"
+
+rules:
+  src: "Source code"
+  src/components: "UI components (if applicable)"
+  src/utils: "Shared utility functions"
+  src/types: "TypeScript type definitions"
+  src/services: "Business logic and external service integrations"
+  tests: "Test files, mirrors src structure"
+  docs: "Documentation"
+  scripts: "Build and utility scripts"

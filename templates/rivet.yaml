@@ -1,0 +1,11 @@
+# rivet.yaml - Rivet project file
+# Living architecture. Anchored requirements. Locked terminology.
+
+project:
+  name: ""
+  purpose: ""
+  design_values: []
+
+systems: {}
+
+layout: null

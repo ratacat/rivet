@@ -1,0 +1,35 @@
+# ABOUTME: Defines the goals and purpose of the terminology system
+# ABOUTME: What we're trying to accomplish and why
+
+primary_goal: |
+  Give automated structure for AIs integrating with a codebase,
+  specifically around linguistic noise and drift, reducing confusion
+  and hallucinations.
+
+secondary_goals:
+  architecture_tracking: |
+    Maintain living architecture definitions that stay current as code
+    changes. While vibe coding, you should always be able to point to
+    a well-defined architecture document. As scope changes, refactors
+    happen, things get renamed - the architecture stays accurate.
+
+  requirements_persistence: |
+    Keep requirements married to the systems they describe, moving
+    forward through a changing environment. When things get refactored
+    or renamed, requirements don't get lost - they travel with the
+    system or get explicitly handled.
+
+    Requirements have similar value to tests - an LLM can look at
+    requirements, look at the system, and verify they match. That's
+    high-value stuff worth preserving.
+
+constraints:
+  - This is a disambiguation system, not a documentation system
+  - Only things that cause confusion deserve entries
+  - Smaller is better - excessive entries create more noise than signal
+  - Systems only, not every method/interface
+
+threshold_for_entry:
+  - Multiple files with clear boundary (a "system")
+  - Has been confused before (reactive, not proactive documentation)
+  - Non-obvious name or overlaps with similar concepts

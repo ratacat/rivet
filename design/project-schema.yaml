@@ -1,0 +1,37 @@
+# ABOUTME: Top-level project schema for rivet.yaml
+# ABOUTME: Project context, design values, and system references
+
+# This is what a rivet.yaml file looks like at the top level
+
+schema_draft:
+
+  project:
+    name: "MyProject"
+    purpose: |
+      One or two sentences about what this project does.
+      Helps AI understand the big picture.
+
+    design_values:
+      # High-level feel and principles
+      # These guide decisions when things are ambiguous
+      - "Simplicity over flexibility"
+      - "User's words preserved, not restructured"
+      - "Explicit over implicit"
+
+    conventions:
+      # Optional - codebase organization rules
+      # Could reference a named convention set or define inline
+      # Needs a name for this concept - TBD
+      organization: null  # or: "standard-ts" or custom definition
+
+  systems:
+    # References to individual system entries
+    # Each system has: description, requirements, symbols, relationships
+    Router:
+      # ... (see schema-draft.yaml for full system schema)
+    Config:
+      # ...
+
+# The project section is new - gives AI context before diving into systems
+# Design values help AI make judgment calls that match user's style
+# Conventions (optional) provide structure rules

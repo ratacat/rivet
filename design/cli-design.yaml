@@ -1,0 +1,141 @@
+# ABOUTME: CLI design principles and command structure
+# ABOUTME: Simple, sexy, well-thought-out syntax
+
+principles:
+  - CLI native - command-line tool first
+  - Simple and sexy syntax
+  - Minimal typing for common operations
+  - Auto-commit each change for granular undo
+  - Single tool use, multiple commits when batching
+
+auto_commit:
+  description: |
+    Every rivet command that modifies rivet.yaml automatically commits the change.
+    Single tool use, atomic operation, git handles undo.
+
+  behavior: |
+    1. Read rivet.yaml
+    2. Make change
+    3. Write rivet.yaml
+    4. git add rivet.yaml
+    5. git commit -m "rivet: <operation description>"
+
+  batch_behavior: |
+    When using rivet sync with multiple operations, each operation gets its
+    own commit in sequence. One tool use, multiple commits.
+
+    Example: rivet sync --add Router "..." --deprecate OldRouter
+    Creates two commits:
+      1. "rivet: add Router"
+      2. "rivet: deprecate OldRouter"
+
+    Each can be reverted individually with git revert.
+
+  flags:
+    --no-commit: "Skip auto-commit for this operation"
+
+commands:
+
+  # Context / Reading
+  prime:
+    usage: "rivet prime [system...]"
+    description: |
+      Output context for AI consumption. Dumps project info, systems,
+      requirements, relationships.
+    examples:
+      - "rivet prime              # all systems"
+      - "rivet prime Router       # just Router"
+      - "rivet prime Router Config # multiple systems"
+
+  # Core operations (each auto-commits)
+  init:
+    usage: "rivet init [--minimal]"
+    description: "Initialize Rivet in a project. Interactive or minimal."
+
+  add:
+    usage: "rivet add <name> <description>"
+    description: "Add a new system"
+    commit_message: "rivet: add <name>"
+
+  show:
+    usage: "rivet show <name>"
+    description: "Show details of one system (no commit, read-only)"
+
+  list:
+    usage: "rivet list [--status <status>]"
+    description: "List all systems (no commit, read-only)"
+
+  require:
+    usage: "rivet require <system> <statement>"
+    description: "Add requirement to a system"
+    commit_message: "rivet: require <system> '<statement>'"
+
+  symbol:
+    usage: "rivet symbol <system> <symbol>"
+    description: "Lock a code symbol to a system"
+    commit_message: "rivet: symbol <system> <symbol>"
+
+  link:
+    usage: "rivet link <system> --depends-on|--used-by <other>"
+    description: "Add relationship between systems"
+    commit_message: "rivet: link <system> -> <other>"
+
+  deprecate:
+    usage: "rivet deprecate <system> [--replaced-by <new>]"
+    description: "Mark system as deprecated, optionally specify replacement"
+    commit_message: "rivet: deprecate <system> [replaced by <new>]"
+
+  # Batch operations
+  sync:
+    usage: "rivet sync [operations...]"
+    description: |
+      Run multiple operations in one command. Each operation gets its own
+      commit for granular undo.
+    examples:
+      - "rivet sync --add Router 'handles routing' --deprecate OldRouter"
+      - "rivet sync --add Foo 'desc' --require Foo 'must do X' --symbol Foo createFoo"
+    flags:
+      --add: "<name> <description>"
+      --deprecate: "<name> [--replaced-by <new>]"
+      --require: "<system> <statement>"
+      --symbol: "<system> <symbol>"
+      --link: "<system> --depends-on|--used-by <other>"
+
+  # Views (read-only, no commits)
+  arch:
+    usage: "rivet arch"
+    aliases: ["architecture"]
+    description: "Show architecture overview - all systems and relationships"
+
+  reqs:
+    usage: "rivet reqs [system]"
+    description: "Show requirements. All, or filtered to one system."
+
+  terms:
+    usage: "rivet terms"
+    description: "Show all locked terminology/symbols"
+
+  # Checking (read-only, no commits)
+  check:
+    usage: "rivet check"
+    description: "Grep codebase for symbols, report matches/mismatches"
+
+  orphans:
+    usage: "rivet orphans"
+    description: "Find orphaned requirements (parent system deprecated/removed)"
+
+  # Layout (optional codebase organization)
+  layout:
+    usage: "rivet layout [flavor]"
+    description: "Show current layout, or set to a flavor"
+    examples:
+      - "rivet layout                # show current"
+      - "rivet layout standard-ts    # adopt standard-ts layout"
+      - "rivet layout check          # verify codebase matches layout"
+
+# Workflow summary:
+# 1. rivet prime → AI gets context
+# 2. Conversation about changes, naming negotiation
+# 3. AI runs commands (direct or sync)
+# 4. Each change auto-committed
+# 5. Don't like something? git revert the specific commit
