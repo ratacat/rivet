@@ -77,8 +77,14 @@ commands:
 
   term:
     usage: "rivet term <system> <term>"
-    description: "Lock a term (code name, concept) to a system"
+    description: |
+      Lock a term to a specific system. System-level terms are code names,
+      function names, class names - locked vocabulary for that system.
+      For project-wide terms not tied to any system, use 'rivet define'.
     commit_message: "rivet: term <system> <term>"
+    examples:
+      - "rivet term Router createRouter      # createRouter belongs to Router"
+      - "rivet term Config loadConfig        # loadConfig belongs to Config"
 
   purge:
     usage: "rivet purge <old-term> <new-term>"
@@ -90,12 +96,17 @@ commands:
   define:
     usage: "rivet define <term> <definition>"
     description: |
-      Add a project-level glossary term. These are locked definitions not
-      tied to any system - concepts, jargon, vocabulary for this codebase.
+      Add a PROJECT-WIDE glossary term. Unlike 'rivet term' which locks a
+      term to a specific system, 'define' creates vocabulary that applies
+      across the entire codebase - concepts, jargon, conventions.
+
+      Use 'define' for: concepts, methodology terms, project-specific jargon
+      Use 'term' for: code names, function names, class names tied to a system
     commit_message: "rivet: define <term>"
     examples:
       - "rivet define vibe_coding 'AI handles implementation while human guides'"
       - "rivet define harvest 'extracting requirements from transcripts'"
+      - "rivet define system 'cohesive code bundle forming single mental model'"
 
   link:
     usage: "rivet link <system> --depends-on|--used-by <other>"
