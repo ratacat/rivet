@@ -46,3 +46,24 @@ threshold_for_entry:
   - Multiple files with clear boundary (a "system")
   - Has been confused before (reactive, not proactive documentation)
   - Non-obvious name or overlaps with similar concepts
+
+what_is_a_system: |
+  A system is a cohesive bundle of code that forms a single mental model.
+
+  Criteria:
+  - Has clear boundaries (you can point to where it starts and ends)
+  - Forms a coherent abstraction (the pieces "fit together" conceptually)
+  - Substantial size (~5% of codebase, or significant enough to cause confusion)
+  - Has a name worth tracking (you'd mention it when explaining architecture)
+
+  A system is something you'd draw as a box in an architecture diagram.
+  It's what you'd explain to a new team member as "the X that handles Y."
+
+  NOT a system:
+  - Individual functions or methods (use live scan via rivet check)
+  - Utility helpers without conceptual identity
+  - Single files that are just implementation details
+  - Things too small to have a "name" worth locking
+
+  When in doubt: if it's caused confusion before, or has a name that could
+  drift or be misused, it's probably worth an entry. If not, leave it out.

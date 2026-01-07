@@ -70,10 +70,17 @@ commands:
     description: "Add requirement to a system"
     commit_message: "rivet: require <system> '<statement>'"
 
-  symbol:
-    usage: "rivet symbol <system> <symbol>"
-    description: "Lock a code symbol to a system"
-    commit_message: "rivet: symbol <system> <symbol>"
+  term:
+    usage: "rivet term <system> <term>"
+    description: "Lock a term (code name, concept) to a system"
+    commit_message: "rivet: term <system> <term>"
+
+  purge:
+    usage: "rivet purge <old-term> <new-term>"
+    description: |
+      Rename a term across the codebase. Uses ripgrep to find occurrences,
+      provides AI with instructions to replace. Updates rivet.yaml terms.
+    commit_message: "rivet: purge <old-term> → <new-term>"
 
   link:
     usage: "rivet link <system> --depends-on|--used-by <other>"
@@ -93,12 +100,12 @@ commands:
       commit for granular undo.
     examples:
       - "rivet sync --add Router 'handles routing' --deprecate OldRouter"
-      - "rivet sync --add Foo 'desc' --require Foo 'must do X' --symbol Foo createFoo"
+      - "rivet sync --add Foo 'desc' --require Foo 'must do X' --term Foo createFoo"
     flags:
       --add: "<name> <description>"
       --deprecate: "<name> [--replaced-by <new>]"
       --require: "<system> <statement>"
-      --symbol: "<system> <symbol>"
+      --term: "<system> <term>"
       --link: "<system> --depends-on|--used-by <other>"
 
   # Views (read-only, no commits)
@@ -118,7 +125,7 @@ commands:
   # Checking (read-only, no commits)
   check:
     usage: "rivet check"
-    description: "Grep codebase for symbols, report matches/mismatches"
+    description: "Grep codebase for terms, report matches/mismatches"
 
   orphans:
     usage: "rivet orphans"

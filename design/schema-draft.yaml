@@ -19,7 +19,7 @@ example_entry:
       - "Redis for session storage - need sub-ms latency"
       - "Async-first API for high-concurrency workloads"
 
-    symbols:                        # locked code names
+    terms:                          # locked terminology (code names, concepts)
       - ExampleSystem
       - createExampleSystem
 
@@ -41,7 +41,7 @@ rules:
   - requirements are atomic single sentences (the WHAT)
   - decisions are single statements capturing the WHY
   - when a decision is supplanted, remove it (stay true to "what IS")
-  - symbols are locked once set, changes require explicit migration
+  - terms are locked once set, changes require explicit migration (use rivet purge)
   - status transitions: active -> deprecated -> (deleted from file)
   - replacing:X status means this is actively replacing X
   - differs_from is optional but high value for similar-sounding things
