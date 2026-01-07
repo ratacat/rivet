@@ -13,9 +13,11 @@ The tooling hasn't caught up yet.
 
 ---
 
-Rivet is a small tool that locks your terminology to your code. A rivet is a permanent fastener—it holds two layers together without needing attention. It either holds or it doesn't.
+Rivet is a passive, zero-maintenance tool for AI-driven development that strengthens the connection between your linguistic layer and your implementation layer.
 
-That's what this does. You define the systems in your codebase, the requirements they fulfill, the decisions behind them, the terms that matter. Rivet keeps them fastened to the code. They don't drift. They don't accumulate. They mean what you said they mean.
+It operates by scanning and extracting decisions, requirements, and terminology from your transcripts with your coding agent. There's a huge amount of valuable material in those conversations—architecture decisions, naming conventions, requirements you've articulated—that consistently gets wasted. Every time you have to repeat yourself to an AI, every time you re-explain a decision or clarify a term, that's an opportunity for better tooling.
+
+A rivet is a permanent fastener. It holds two layers together without needing attention. It either holds or it doesn't. That's what this does. Once something is riveted, it doesn't drift. It means what you said it means.
 
 ---
 
