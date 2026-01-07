@@ -21,59 +21,39 @@ A rivet is a permanent fastener. It holds two layers together without needing at
 
 ---
 
-Some principles we're trying to hold:
+## The feeling
 
-**Passive.** You shouldn't have to think about Rivet. It's there when you need it.
+You're three weeks into a project with your coding agent. You've had dozens of conversations. You've explained the architecture multiple times. You've made decisions, changed your mind, made new decisions.
 
-**Zero maintenance.** If it requires upkeep to stay useful, we've failed.
+And then you ask it to add a feature to the Router.
 
-**Incapable of cruft.** This is the hard one. Give an AI any leash and it runs with it—generating too much of something until it loses meaning. Rivet is structurally small. Discrete units. Only things that cause confusion deserve entries.
+It creates a new Router. A second one. `RouterV2`. Or worse, `NewRouter`. It's not malicious—it just doesn't remember that you already have a Router, that you've been iterating on it, that it has requirements and history and a reason for being the way it is.
 
----
+So you explain again. You say "no, the existing Router, the one in `src/routing/`." And it apologizes and fixes it. But now there's a weird import somewhere. A dependency that doesn't make sense. Something got tangled.
 
-Here's what it looks like:
+You find yourself repeating the same context. The same terminology. The same architectural decisions. It feels like talking to yourself, or like talking to someone with amnesia who's very good at coding but can't hold onto the bigger picture.
 
-```yaml
-# rivet.yaml
-project:
-  name: MyApp
-  purpose: "E-commerce platform for handmade goods"
-
-  glossary:
-    vibe_coding:
-      definition: "AI handles implementation while human guides direction"
-
-systems:
-  Router:
-    description: "Handles URL routing and navigation"
-
-    requirements:
-      - "Must support nested routes"
-      - "Must handle auth redirects"
-
-    decisions:
-      - "Async-first for high-concurrency workloads"
-
-    terms:
-      createRouter: "factory function - use instead of new Router()"
-      useRouter: "React hook for router context"
-```
+This is the problem Rivet exists to solve.
 
 ---
 
-```bash
-rivet init
-rivet system add Router "Handles URL routing"
-rivet system edit Router +requirement "Must support nested routes"
-rivet system edit Router +term createRouter "factory function"
-rivet context
-```
+## What Rivet tracks
 
-Every command auto-commits. Don't like something? `git revert`.
+Rivet is small. It's seamless. It provides a living architecture of what currently exists—not documentation, not aspiration, just what is.
+
+**Systems** — The major components in your codebase. Things with clear boundaries that you'd draw as boxes in an architecture diagram. A system is a cohesive bundle of code that forms a single mental model.
+
+**Requirements** — What a system must do. Atomic statements. The WHAT.
+
+**Decisions** — Why a system is the way it is. Design rationale. The WHY.
+
+**Terms** — Locked vocabulary for a system. The function names, class names, identifiers that shouldn't drift. Each term can have optional context about when to use it.
+
+**Glossary** — Project-wide terms not tied to any system. Concepts, jargon, conventions that have specific meaning in your codebase.
 
 ---
 
-**Commands**
+## Commands
 
 `rivet system add|show|list|edit|link|deprecate`
 
