@@ -75,38 +75,53 @@ commands:
     description: "Add a design decision to a system (the WHY)"
     commit_message: "rivet: decide <system> '<statement>'"
 
-  term:
-    usage: "rivet term <system> <term>"
+  lock:
+    usage: "rivet lock <system> <identifier>"
     description: |
-      Lock a term to a specific system. System-level terms are code names,
-      function names, class names - locked vocabulary for that system.
-      For project-wide terms not tied to any system, use 'rivet define'.
-    commit_message: "rivet: term <system> <term>"
+      Lock a code identifier to a specific system. These are function names,
+      class names, variable names - locked to that system's namespace.
+      For project-wide glossary terms, use 'rivet term define'.
+    commit_message: "rivet: lock <system> <identifier>"
     examples:
-      - "rivet term Router createRouter      # createRouter belongs to Router"
-      - "rivet term Config loadConfig        # loadConfig belongs to Config"
+      - "rivet lock Router createRouter      # createRouter belongs to Router"
+      - "rivet lock Config loadConfig        # loadConfig belongs to Config"
 
   purge:
-    usage: "rivet purge <old-term> <new-term>"
+    usage: "rivet purge <term>"
     description: |
-      Rename a term across the codebase. Uses ripgrep to find occurrences,
-      provides AI with instructions to replace. Updates rivet.yaml terms.
-    commit_message: "rivet: purge <old-term> → <new-term>"
-
-  define:
-    usage: "rivet define <term> <definition>"
-    description: |
-      Add a PROJECT-WIDE glossary term. Unlike 'rivet term' which locks a
-      term to a specific system, 'define' creates vocabulary that applies
-      across the entire codebase - concepts, jargon, conventions.
-
-      Use 'define' for: concepts, methodology terms, project-specific jargon
-      Use 'term' for: code names, function names, class names tied to a system
-    commit_message: "rivet: define <term>"
+      Low-level utility: remove a term from the codebase. Uses ripgrep to find
+      all occurrences, then AI decides what to do (delete, rename, refactor).
+      Not about rivet.yaml - about cleaning up actual code.
     examples:
-      - "rivet define vibe_coding 'AI handles implementation while human guides'"
-      - "rivet define harvest 'extracting requirements from transcripts'"
-      - "rivet define system 'cohesive code bundle forming single mental model'"
+      - "rivet purge oldFunctionName    # AI removes/replaces all occurrences"
+
+  # Term management (subcommands for project-wide glossary)
+  term_define:
+    usage: "rivet term define <term> <definition>"
+    description: |
+      Add a PROJECT-WIDE glossary term. These are concepts, jargon, conventions
+      that apply across the entire codebase - not tied to any specific system.
+    commit_message: "rivet: term define <term>"
+    examples:
+      - "rivet term define vibe_coding 'AI handles implementation while human guides'"
+      - "rivet term define harvest 'extracting requirements from transcripts'"
+
+  term_rename:
+    usage: "rivet term rename <old> <new>"
+    description: |
+      Rename a glossary term. Updates rivet.yaml and adds a 'previously' field
+      to help AI understand the transition. The 'previously' field is temporary -
+      removed once the old term is purged from the codebase.
+    commit_message: "rivet: term rename <old> → <new>"
+
+  term_delete:
+    usage: "rivet term delete <term>"
+    description: "Remove a term from the glossary."
+    commit_message: "rivet: term delete <term>"
+
+  term_list:
+    usage: "rivet term list"
+    description: "Show all project-wide glossary terms."
 
   link:
     usage: "rivet link <system> --depends-on|--used-by <other>"
@@ -133,8 +148,8 @@ commands:
       --add: "<name> <description>"
       --require: "<system> <statement>"
       --decide: "<system> <statement>"
-      --term: "<system> <term>"
-      --define: "<term> <definition>"
+      --lock: "<system> <identifier>"
+      --term-define: "<term> <definition>"
       --link: "<system> --depends-on|--used-by <other>"
       --deprecate: "<name> [--replaced-by <new>]"
 

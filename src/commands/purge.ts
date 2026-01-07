@@ -1,12 +1,14 @@
-// ABOUTME: rivet purge <old-term> <new-term> - rename a term across codebase
-// ABOUTME: Uses ripgrep to find occurrences, provides AI with replacement instructions
+// ABOUTME: rivet purge <term> - remove a term from the codebase
+// ABOUTME: Low-level utility, AI decides what to do with each occurrence
 
 // Usage:
-//   rivet purge OldRouter Router
-//   rivet purge getUserId fetchUserId
+//   rivet purge oldFunctionName
+//   rivet purge deprecatedClassName
 
 // Workflow:
-//   1. Find all occurrences of old-term using ripgrep
-//   2. Generate replacement instructions for AI
-//   3. Update rivet.yaml terms list
-//   4. Log the purge operation
+//   1. Use ripgrep to find all occurrences of the term
+//   2. Present findings to AI
+//   3. AI decides for each occurrence: delete, rename, refactor
+//   4. Not about rivet.yaml - about cleaning up actual code
+
+// This is a low-level utility. For renaming glossary terms, use 'rivet term rename'.

@@ -28,9 +28,19 @@ schema_draft:
       # Project-level locked terms - not tied to any system
       # Concepts, definitions, vocabulary specific to this codebase
       # These are "when we say X, we mean Y" definitions
-      vibe_coding: "Development style where AI handles implementation details while human guides direction"
-      harvest: "The process of extracting requirements and decisions from AI transcripts"
-      system: "A cohesive bundle of code forming a single mental model with clear boundaries"
+      #
+      # Structure:
+      #   term_name:
+      #     definition: "what it means"
+      #     previously: old_name    # temporary, removed once old term purged from codebase
+      #
+      vibe_coding:
+        definition: "Development style where AI handles implementation details while human guides direction"
+      harvest:
+        definition: "The process of extracting requirements and decisions from AI transcripts"
+      trading_engine:
+        definition: "Core trading logic and execution"
+        previously: arb_trader    # removed once 'arb_trader' is purged from codebase
 
   systems:
     # References to individual system entries
@@ -46,3 +56,8 @@ schema_draft:
 # Glossary locks project-wide vocabulary - terms that aren't system-specific
 #   but have specific meaning in this codebase. Use for concepts, jargon,
 #   conventions that need consistent interpretation.
+#
+# The 'previously' field is temporary - it helps AI understand renames during
+# transition. It should be auto-removed once the old term is purged from the
+# codebase. Implementation: 'rivet check' or a dedicated cleanup command scans
+# for terms in 'previously' fields; if not found anywhere in code, remove the field.
