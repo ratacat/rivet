@@ -1,6 +1,26 @@
 # ABOUTME: Defines the goals and purpose of the terminology system
 # ABOUTME: What we're trying to accomplish and why
 
+why_language_matters: |
+  In the age of AI-assisted software development, words are first-class citizens.
+  They always have been - "what happens when someone else reads this code?" or
+  "what happens when I read this in two weeks?" - but now there's a new reader:
+  the AI. And AIs take language literally in ways humans don't.
+
+  The scope of use for our primary instruments in software development is
+  expanding. Previously, naming only mattered for human comprehension. Now it
+  also determines whether an AI hallucinates, drifts, or stays grounded.
+
+  Companies like SpaceX famously control vocabulary - no new acronym without
+  approval. This isn't bureaucracy; it's recognition that language is, as the
+  saying goes, "the liquid we're all dissolved in." How can you have a
+  functional conversation - with a human or an AI - if you can't agree on the
+  meaning of things?
+
+  Rivet exists to lock in your language. Not everything - just the things that
+  matter. The systems, the concepts, the terms that define your architecture.
+  Once locked, they don't drift. They mean what you said they mean.
+
 primary_goal: |
   Give automated structure for AIs integrating with a codebase,
   specifically around linguistic noise and drift, reducing confusion
