@@ -19,9 +19,12 @@ example_entry:
       - "Redis for session storage - need sub-ms latency"
       - "Async-first API for high-concurrency workloads"
 
-    terms:                          # locked terminology (code names, concepts)
-      - ExampleSystem
-      - createExampleSystem
+    terms:                          # locked terminology (map: term -> context)
+      ExampleSystem: null           # locked, self-explanatory
+      createExampleSystem: "factory function - use instead of 'new ExampleSystem()'"
+      useExampleSystem: "React hook for accessing ExampleSystem in components"
+      # value is optional context: when to use, what it is, why it's locked
+      # null means "locked but self-explanatory"
 
     depends_on:                     # what this needs
       - OtherSystem
@@ -41,6 +44,8 @@ rules:
   - requirements are atomic single sentences (the WHAT)
   - decisions are single statements capturing the WHY
   - when a decision is supplanted, remove it (stay true to "what IS")
+  - terms is a map: term -> optional context (null if self-explanatory)
+  - terms are optional/minimal - only key identifiers that matter, not exhaustive
   - terms are locked once set, changes require explicit migration (use rivet purge)
   - status transitions: active -> deprecated -> (deleted from file)
   - replacing:X status means this is actively replacing X

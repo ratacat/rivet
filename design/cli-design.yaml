@@ -123,13 +123,14 @@ commands:
       - "rivet system edit Router +requirement 'must do X'"
       - "rivet system edit Router -requirement 'old req'"
       - "rivet system edit Router +decision 'async-first'"
-      - "rivet system edit Router +term createRouter"
+      - "rivet system edit Router +term createRouter 'factory function'"
+      - "rivet system edit Router +term RouterProvider"  # null context
       - "rivet system edit Router status deprecated"
     fields:
       description: "string (replace)"
       requirement: "list (+add / -remove)"
       decision: "list (+add / -remove)"
-      term: "list (+add / -remove) - locked code identifiers"
+      term: "map (+add / -remove) - term with optional context"
       status: "enum: active | deprecated | replacing:<system>"
       depends_on: "list (+add / -remove)"
       used_by: "list (+add / -remove)"
