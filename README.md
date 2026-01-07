@@ -10,7 +10,7 @@ The tooling hasn't caught up yet.
 
 ---
 
-Rivet is a passive, zero-maintenance tool for AI-driven development that strengthens the connection between your linguistic layer and your implementation layer.
+Rivet aims to be a seamless, low-maintenance tool that strengthens the connection between your linguistic layer and your implementation layer.
 
 It operates by scanning and extracting decisions, requirements, and terminology from your transcripts with your coding agent. There's a huge amount of valuable material in those conversations—architecture decisions, naming conventions, requirements you've articulated—that consistently gets wasted. Every time you have to repeat yourself to an AI, every time you re-explain a decision or clarify a term, that's an opportunity for better tooling.
 
