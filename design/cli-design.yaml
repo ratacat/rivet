@@ -67,8 +67,13 @@ commands:
 
   require:
     usage: "rivet require <system> <statement>"
-    description: "Add requirement to a system"
+    description: "Add requirement to a system (the WHAT)"
     commit_message: "rivet: require <system> '<statement>'"
+
+  decide:
+    usage: "rivet decide <system> <statement>"
+    description: "Add a design decision to a system (the WHY)"
+    commit_message: "rivet: decide <system> '<statement>'"
 
   term:
     usage: "rivet term <system> <term>"
@@ -107,16 +112,20 @@ commands:
     usage: "rivet sync [operations...]"
     description: |
       Run multiple operations in one command. Each operation gets its own
-      commit for granular undo.
+      commit for granular undo. This is THE command for end-of-session updates -
+      capture all systems, requirements, decisions, terms, and glossary in one call.
     examples:
       - "rivet sync --add Router 'handles routing' --deprecate OldRouter"
       - "rivet sync --add Foo 'desc' --require Foo 'must do X' --term Foo createFoo"
+      - "rivet sync --define vibe_coding 'AI handles implementation' --decide Router 'async-first for scale'"
     flags:
       --add: "<name> <description>"
-      --deprecate: "<name> [--replaced-by <new>]"
       --require: "<system> <statement>"
+      --decide: "<system> <statement>"
       --term: "<system> <term>"
+      --define: "<term> <definition>"
       --link: "<system> --depends-on|--used-by <other>"
+      --deprecate: "<name> [--replaced-by <new>]"
 
   # Views (read-only, no commits)
   arch:

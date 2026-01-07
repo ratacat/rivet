@@ -42,6 +42,19 @@ constraints:
   - Smaller is better - excessive entries create more noise than signal
   - Systems only, not every method/interface
 
+key_requirement: |
+  At the end of a context session, ALL changes must be capturable in a single
+  rivet sync command. Systems, requirements, decisions, terms, glossary -
+  everything from the conversation goes into one atomic batch operation.
+
+  Example end-of-session command:
+    rivet sync \
+      --add Router "handles URL routing" \
+      --require Router "must support nested routes" \
+      --decide Router "async-first for scale" \
+      --term Router createRouter \
+      --define vibe_coding "AI handles implementation while human guides"
+
 threshold_for_entry:
   - Multiple files with clear boundary (a "system")
   - Has been confused before (reactive, not proactive documentation)
