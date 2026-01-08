@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/check-rivet.sh"
+            "command": "bash -c 'if [ ! -f .rivet/systems.yaml ]; then echo \"[Rivet] No .rivet/systems.yaml found. Consider running rivet-scan to auto-discover systems.\"; fi'"
           }
         ]
       }
