@@ -1,12 +1,13 @@
 #!/bin/bash
-# ABOUTME: SessionStart hook to check for .rivet/systems.yaml
-# ABOUTME: Outputs context for Claude to auto-invoke rivet-scan if needed
+# ABOUTME: SessionStart hook to output rivet context
+# ABOUTME: Always outputs context for Claude - similar to bd prime
 
 # Check if .rivet/systems.yaml exists in current directory or parents
 find_rivet() {
     local dir="$PWD"
     while [ "$dir" != "/" ]; do
         if [ -f "$dir/.rivet/systems.yaml" ]; then
+            echo "$dir/.rivet/systems.yaml"
             return 0
         fi
         dir=$(dirname "$dir")
@@ -14,22 +15,38 @@ find_rivet() {
     return 1
 }
 
-if find_rivet; then
-    # Rivet is already initialized - no action needed
-    exit 0
-else
-    # No .rivet/systems.yaml found - output context for Claude
-    # This stdout becomes context that Claude reads
-    cat << 'EOF'
-[Rivet Plugin] No .rivet/systems.yaml found in this project.
+RIVET_FILE=$(find_rivet)
 
-To set up Rivet for this codebase, I should scan the project structure and propose systems. This will:
+if [ -n "$RIVET_FILE" ]; then
+    cat << EOF
+# Rivet Context
+
+This project has Rivet initialized at: $RIVET_FILE
+
+## Available Skills
+- **rivet-scan**: Re-scan codebase to update systems
+- **rivet-harvest**: Extract decisions/requirements from conversation
+
+## Commands
+- \`rivet context\` - Show full project context
+- \`rivet system list\` - List all systems
+- \`rivet term list\` - List glossary terms
+EOF
+else
+    cat << 'EOF'
+# Rivet Setup Required
+
+No `.rivet/systems.yaml` found in this project.
+
+## Action Required
+Use the **rivet-scan** skill to auto-discover systems from this codebase. This will:
 1. Analyze package boundaries (package.json, Cargo.toml, go.mod, etc.)
 2. Identify major directories and modules
 3. Propose a systems schema
-4. Create .rivet/systems.yaml with the proposed structure
+4. Create `.rivet/systems.yaml` with the proposed structure
 
-I'll use the rivet-scan skill to do this automatically.
+Run the rivet-scan skill now to initialize.
 EOF
-    exit 0
 fi
+
+exit 0
