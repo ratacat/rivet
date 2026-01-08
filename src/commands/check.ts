@@ -1,4 +1,4 @@
-// ABOUTME: rivet check - check codebase against rivet.yaml
+// ABOUTME: rivet check - check codebase against .rivet/systems.yaml
 // ABOUTME: Greps for terms, reports what's found/missing, surfaces mismatches
 
 const USAGE = `

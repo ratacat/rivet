@@ -1,7 +1,7 @@
-# ABOUTME: Top-level project schema for rivet.yaml
+# ABOUTME: Top-level project schema for .rivet/systems.yaml
 # ABOUTME: Project context, design values, and system references
 
-# This is what a rivet.yaml file looks like at the top level
+# This is what a .rivet/systems.yaml file looks like at the top level
 
 schema_draft:
 
@@ -36,8 +36,10 @@ schema_draft:
       #
       vibe_coding:
         definition: "Development style where AI handles implementation details while human guides direction"
+      scan:
+        definition: "Automatic discovery of systems from codebase structure. Runs on plugin install, not user-invoked."
       harvest:
-        definition: "The process of extracting requirements and decisions from AI transcripts"
+        definition: "Interactive extraction of decisions/requirements from AI transcripts. User reviews and selects items."
       trading_engine:
         definition: "Core trading logic and execution"
         previously: arb_trader    # removed once 'arb_trader' is purged from codebase

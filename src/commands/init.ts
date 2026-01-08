@@ -1,5 +1,5 @@
 // ABOUTME: rivet init - initialize Rivet in a project
-// ABOUTME: Creates rivet.yaml with project info
+// ABOUTME: Creates .rivet/systems.yaml with project info
 
 import { initRivetFile, rivetFileExists } from '../parser/yaml.js'
 import { basename } from 'path'
@@ -26,7 +26,7 @@ export async function runInit(args: string[]): Promise<void> {
 
   // Check if already initialized
   if (rivetFileExists()) {
-    throw new Error('rivet.yaml already exists in this project')
+    throw new Error('.rivet/systems.yaml already exists in this project')
   }
 
   // Parse options

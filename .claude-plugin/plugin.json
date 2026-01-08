@@ -1,0 +1,13 @@
+{
+  "name": "rivet",
+  "version": "0.0.1",
+  "description": "Lock linguistic decisions in your codebase. Living architecture, anchored requirements, locked terminology.",
+  "author": {
+    "name": "ratacat"
+  },
+  "repository": "https://github.com/ratacat/rivet",
+  "license": "MIT",
+  "keywords": ["architecture", "terminology", "requirements", "ai-context"],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json"
+}

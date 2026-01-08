@@ -19,7 +19,7 @@ A rivet is a permanent fastener. It holds two layers together without needing at
 ---
 
 ```yaml
-# rivet.yaml
+# .rivet/systems.yaml
 project:
   name: MyApp
   purpose: "E-commerce platform for handmade goods"

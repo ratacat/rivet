@@ -7,18 +7,18 @@ principles:
   - Minimal typing for common operations
   - Auto-commit each change for granular undo
   - Single tool use, multiple commits when batching
-  - Pure CLI - no interactive modes or $EDITOR
+  - Pure CLI for normal ops - no $EDITOR (exception: harvest review UI)
 
 auto_commit:
   description: |
-    Every rivet command that modifies rivet.yaml automatically commits the change.
+    Every rivet command that modifies .rivet/systems.yaml automatically commits the change.
     Single tool use, atomic operation, git handles undo.
 
   behavior: |
-    1. Read rivet.yaml
+    1. Read .rivet/systems.yaml
     2. Make change
-    3. Write rivet.yaml
-    4. git add rivet.yaml
+    3. Write .rivet/systems.yaml
+    4. git add .rivet/systems.yaml
     5. git commit -m "rivet: <operation description>"
 
   batch_behavior: |
@@ -87,11 +87,22 @@ commands:
     examples:
       - "rivet purge oldFunctionName    # AI removes/replaces all occurrences"
 
+  # NOTE: scan is NOT a user-facing CLI command.
+  # It runs automatically as part of plugin install.
+  # See design/plugin-install.yaml for the install flow.
+
   harvest:
     usage: "rivet harvest"
     description: |
-      Bootstrap Rivet from an existing project. Scans codebase for systems,
-      parses AI transcripts for requirements/decisions, generates draft rivet.yaml.
+      Extract decisions, requirements, and terminology from AI transcript history.
+      INTERACTIVE: user reviews extracted items, selects/deselects, assigns to systems.
+      Requires scan to run first (systems must exist).
+    implementation: |
+      1. Parse Claude Code transcripts (~/.claude/projects/*.jsonl)
+      2. AI extracts candidate decisions, requirements, terms
+      3. Present to user: spacebar to select/deselect, arrows to reassign
+      4. Confirm to write selected items to .rivet/systems.yaml
+    note: "Run 'rivet scan' first to establish the systems schema."
 
   #============================================================================
   # SYSTEM SUBCOMMANDS: rivet system <subcommand>

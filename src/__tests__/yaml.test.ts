@@ -1,6 +1,6 @@
-// ABOUTME: Tests for rivet.yaml parsing and serialization
+// ABOUTME: Tests for .rivet/systems.yaml parsing and serialization
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtempSync, rmSync, writeFileSync, readFileSync } from 'fs'
+import { mkdtempSync, rmSync, writeFileSync, readFileSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { tmpdir } from 'os'
 import {
@@ -25,27 +25,27 @@ describe('rivet yaml parser', () => {
   })
 
   describe('initRivetFile', () => {
-    it('creates a new rivet.yaml', () => {
+    it('creates a new .rivet/systems.yaml', () => {
       const filePath = initRivetFile('TestProject', 'A test project', tempDir)
 
-      expect(filePath).toBe(join(tempDir, 'rivet.yaml'))
+      expect(filePath).toBe(join(tempDir, '.rivet', 'systems.yaml'))
 
       const content = readFileSync(filePath, 'utf-8')
       expect(content).toContain('name: TestProject')
       expect(content).toContain('purpose: A test project')
     })
 
-    it('throws if rivet.yaml already exists', () => {
+    it('throws if .rivet/systems.yaml already exists', () => {
       initRivetFile('TestProject', 'A test project', tempDir)
 
       expect(() => initRivetFile('Another', 'Another project', tempDir)).toThrow(
-        'rivet.yaml already exists'
+        '.rivet/systems.yaml already exists'
       )
     })
   })
 
   describe('readRivetFile', () => {
-    it('reads and parses rivet.yaml', () => {
+    it('reads and parses .rivet/systems.yaml', () => {
       const yaml = `
 project:
   name: TestProject
@@ -61,9 +61,11 @@ systems:
       createRouter: factory function
       RouterProvider: ~
 `
-      writeFileSync(join(tempDir, 'rivet.yaml'), yaml)
+      const rivetDir = join(tempDir, '.rivet')
+      mkdirSync(rivetDir, { recursive: true })
+      writeFileSync(join(rivetDir, 'systems.yaml'), yaml)
 
-      const data = readRivetFile(join(tempDir, 'rivet.yaml'))
+      const data = readRivetFile(join(rivetDir, 'systems.yaml'))
 
       expect(data.project.name).toBe('TestProject')
       expect(data.systems?.Router.description).toBe('handles routing')
@@ -79,7 +81,7 @@ systems:
   })
 
   describe('writeRivetFile', () => {
-    it('writes rivet.yaml preserving structure', () => {
+    it('writes .rivet/systems.yaml preserving structure', () => {
       const data: RivetFile = {
         project: {
           name: 'TestProject',
@@ -101,7 +103,9 @@ systems:
         },
       }
 
-      const filePath = join(tempDir, 'rivet.yaml')
+      const rivetDir = join(tempDir, '.rivet')
+      mkdirSync(rivetDir, { recursive: true })
+      const filePath = join(rivetDir, 'systems.yaml')
       writeFileSync(filePath, '') // Create empty file first
       writeRivetFile(data, filePath)
 
@@ -113,25 +117,25 @@ systems:
   })
 
   describe('rivetFileExists', () => {
-    it('returns true when rivet.yaml exists', () => {
+    it('returns true when .rivet/systems.yaml exists', () => {
       initRivetFile('Test', 'Test', tempDir)
       expect(rivetFileExists(tempDir)).toBe(true)
     })
 
-    it('returns false when rivet.yaml does not exist', () => {
+    it('returns false when .rivet/systems.yaml does not exist', () => {
       expect(rivetFileExists(tempDir)).toBe(false)
     })
   })
 
   describe('findRivetFile', () => {
-    it('finds rivet.yaml in parent directory', () => {
+    it('finds .rivet/systems.yaml in parent directory', () => {
       initRivetFile('Test', 'Test', tempDir)
 
       const subDir = join(tempDir, 'src', 'commands')
-      require('fs').mkdirSync(subDir, { recursive: true })
+      mkdirSync(subDir, { recursive: true })
 
       const found = findRivetFile(subDir)
-      expect(found).toBe(join(tempDir, 'rivet.yaml'))
+      expect(found).toBe(join(tempDir, '.rivet', 'systems.yaml'))
     })
   })
 })

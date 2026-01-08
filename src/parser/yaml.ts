@@ -1,16 +1,17 @@
-// ABOUTME: Read and write rivet.yaml files
+// ABOUTME: Read and write .rivet/systems.yaml files
 // ABOUTME: Handles parsing, validation, and serialization
 
-import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
 import { parse, stringify } from 'yaml'
 import { join, dirname } from 'path'
 import type { RivetFile } from '../schema/types.js'
 
-const RIVET_FILENAME = 'rivet.yaml'
+const RIVET_DIR = '.rivet'
+const RIVET_FILENAME = 'systems.yaml'
 
 export class RivetFileNotFoundError extends Error {
   constructor(searchPath: string) {
-    super(`No rivet.yaml found in ${searchPath} or any parent directory`)
+    super(`No .rivet/systems.yaml found in ${searchPath} or any parent directory`)
     this.name = 'RivetFileNotFoundError'
   }
 }
@@ -23,16 +24,16 @@ export class RivetParseError extends Error {
 }
 
 /**
- * Find rivet.yaml by searching current directory and ancestors
+ * Find .rivet/systems.yaml by searching current directory and ancestors
  * @param startDir - Directory to start searching from (defaults to cwd)
- * @returns Path to rivet.yaml if found
+ * @returns Path to .rivet/systems.yaml if found
  * @throws RivetFileNotFoundError if not found
  */
 export function findRivetFile(startDir: string = process.cwd()): string {
   let dir = startDir
 
   while (true) {
-    const candidate = join(dir, RIVET_FILENAME)
+    const candidate = join(dir, RIVET_DIR, RIVET_FILENAME)
     if (existsSync(candidate)) {
       return candidate
     }
@@ -47,8 +48,8 @@ export function findRivetFile(startDir: string = process.cwd()): string {
 }
 
 /**
- * Read and parse rivet.yaml
- * @param path - Path to rivet.yaml (auto-discovers if not provided)
+ * Read and parse .rivet/systems.yaml
+ * @param path - Path to systems.yaml (auto-discovers if not provided)
  * @returns Parsed RivetFile
  */
 export function readRivetFile(path?: string): RivetFile {
@@ -82,20 +83,26 @@ export function writeRivetFile(data: RivetFile, path?: string): string {
 }
 
 /**
- * Create a new rivet.yaml file
+ * Create a new .rivet/systems.yaml file
  * @param projectName - Name of the project
  * @param purpose - Purpose of the project
- * @param path - Where to create the file (defaults to cwd)
+ * @param path - Where to create the .rivet folder (defaults to cwd)
  */
 export function initRivetFile(
   projectName: string,
   purpose: string,
   path: string = process.cwd()
 ): string {
-  const filePath = join(path, RIVET_FILENAME)
+  const rivetDir = join(path, RIVET_DIR)
+  const filePath = join(rivetDir, RIVET_FILENAME)
 
   if (existsSync(filePath)) {
-    throw new Error(`${RIVET_FILENAME} already exists at ${filePath}`)
+    throw new Error(`.rivet/systems.yaml already exists at ${filePath}`)
+  }
+
+  // Create .rivet directory if it doesn't exist
+  if (!existsSync(rivetDir)) {
+    mkdirSync(rivetDir, { recursive: true })
   }
 
   const data: RivetFile = {
@@ -116,7 +123,7 @@ export function initRivetFile(
 }
 
 /**
- * Check if rivet.yaml exists in current directory or ancestors
+ * Check if .rivet/systems.yaml exists in current directory or ancestors
  */
 export function rivetFileExists(startDir: string = process.cwd()): boolean {
   try {

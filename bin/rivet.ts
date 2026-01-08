@@ -18,7 +18,7 @@ Usage:
   rivet <command> [options]
 
 Commands:
-  init                   Initialize rivet.yaml in current directory
+  init                   Initialize .rivet/systems.yaml in current directory
   context [system...]    Output context for AI consumption
   system <subcommand>    Manage systems (add, show, list, edit, link, deprecate)
   term <subcommand>      Manage glossary terms (define, rename, delete, list)

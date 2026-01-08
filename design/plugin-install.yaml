@@ -1,0 +1,73 @@
+# ABOUTME: Plugin installation flow and scan behavior
+# ABOUTME: How Rivet bootstraps itself when installed as a Claude plugin
+
+overview: |
+  Rivet is a Claude Code plugin. On install, it automatically scans the
+  codebase and proposes a systems schema. This is the primary onboarding
+  experience - users don't run "rivet scan" manually.
+
+install_flow:
+  trigger: "Plugin is installed in a project"
+
+  steps:
+    1_gather_data: |
+      Plugin runs data-gathering code (Node/TypeScript).
+      Looks for:
+        - Package boundaries (package.json, Cargo.toml, go.mod, pyproject.toml)
+        - Directory structure with clear purpose
+        - Major modules/entry points
+        - Import relationships (optional, for depends_on hints)
+      Outputs structured data for Claude to interpret.
+
+    2_check_existing: |
+      Check if .rivet/systems.yaml already exists in the project.
+
+    3_propose_or_prompt:
+      if_no_existing_file: |
+        Claude interprets the gathered data and proposes systems.
+        Uses prompt guidance about what makes a good system (from goals.yaml).
+        Creates .rivet/ folder and writes draft systems.yaml.
+
+      if_existing_file: |
+        Prompt user with options:
+          - "We detected these systems in your codebase: [list].
+             Your .rivet/systems.yaml has: [list]. What would you like to do?"
+          - Options: Update existing / Start fresh / Skip scan
+        User chooses, then proceed accordingly.
+
+    4_write_file: |
+      Write .rivet/systems.yaml with:
+        - project.name (from package.json or directory name)
+        - project.purpose (inferred or left blank for user)
+        - systems (proposed from scan)
+
+  output: |
+    User has a working .rivet/systems.yaml immediately after install.
+    No manual "rivet scan" step required.
+
+scan_is_a_skill: |
+  Scan IS implemented as a Claude skill (e.g., rivet:scan or similar).
+  But it's not user-invoked — the plugin install hook triggers it.
+
+  The skill:
+    1. Runs data-gathering code (via Bash or built into plugin)
+    2. Receives structured codebase data
+    3. Uses prompt guidance to interpret and propose systems
+    4. Handles existing .rivet/systems.yaml check and user prompts
+    5. Writes result to .rivet/systems.yaml
+
+  This lets Claude do the judgment while keeping the trigger automatic.
+
+plugin_structure:
+  note: "TBD - define actual Claude plugin structure, hooks, skill definitions"
+
+  skills:
+    rivet_scan:
+      description: "Auto-discovery of systems from codebase. Triggered on install."
+      user_invocable: false
+      triggered_by: "install hook"
+
+    rivet_harvest:
+      description: "Extract decisions/requirements from transcripts. Interactive."
+      user_invocable: true
+      command: "/rivet-harvest"
