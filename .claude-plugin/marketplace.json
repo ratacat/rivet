@@ -1,0 +1,22 @@
+{
+  "name": "rivet-marketplace",
+  "owner": {
+    "name": "ratacat"
+  },
+  "metadata": {
+    "description": "Rivet plugin for locking linguistic decisions in codebases",
+    "version": "0.0.1"
+  },
+  "plugins": [
+    {
+      "name": "rivet",
+      "source": {
+        "source": "github",
+        "repo": "ratacat/rivet"
+      },
+      "description": "Lock linguistic decisions in your codebase. Auto-discovers systems on install, extracts decisions from transcripts.",
+      "version": "0.0.1",
+      "keywords": ["architecture", "terminology", "requirements", "ai-context"]
+    }
+  ]
+}
