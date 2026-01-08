@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./scripts/check-rivet.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/check-rivet.sh"
           }
         ]
       }
