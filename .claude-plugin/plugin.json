@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'if [ ! -f .rivet/systems.yaml ]; then echo \"[Rivet] No .rivet/systems.yaml found. Consider running rivet-scan to auto-discover systems.\"; fi'"
+            "command": "bash -c 'if [ -f .rivet/systems.yaml ]; then echo \"[Rivet] Project has .rivet/systems.yaml\"; else echo \"[Rivet] No .rivet/systems.yaml found. Use the rivet-scan skill to auto-discover systems from this codebase.\"; fi'"
           }
         ]
       }
