@@ -9,5 +9,17 @@
   "license": "MIT",
   "keywords": ["architecture", "terminology", "requirements", "ai-context"],
   "skills": "./skills/",
-  "hooks": "./hooks/hooks.json"
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/check-rivet.sh"
+          }
+        ]
+      }
+    ]
+  }
 }
