@@ -1,6 +1,6 @@
 ---
 name: rivet-harvest
-description: Extract decisions, requirements, and terminology from conversation history into .rivet/systems.yaml. Use after rivet-scan to capture architectural decisions from transcripts.
+description: Capture decisions and requirements from conversation history. Use when user says "harvest", "capture decisions", or "save what we discussed" to persist architectural decisions into .rivet/systems.yaml.
 user-invocable: true
 allowed-tools: Bash, Read, Glob, Grep, Edit, Write, AskUserQuestion
 ---

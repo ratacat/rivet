@@ -1,6 +1,6 @@
 ---
 name: rivet-scan
-description: Scan codebase and create .rivet/systems.yaml. Analyzes package boundaries, directories, and modules to propose systems. Use when no .rivet/systems.yaml exists or to refresh system definitions.
+description: Initialize Rivet by scanning codebase structure. Use when SessionStart hook reports no .rivet/systems.yaml, when user says "install rivet" or "set up rivet", or to refresh system definitions after major codebase changes.
 user-invocable: true
 allowed-tools: Bash, Read, Glob, Grep, Write, AskUserQuestion
 ---
