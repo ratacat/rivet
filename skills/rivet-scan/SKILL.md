@@ -1,7 +1,7 @@
 ---
 name: rivet-scan
-description: Auto-discovers systems from codebase structure. Gathers package files, directories, modules, and import relationships to propose a rivet.yaml schema. Use this after installing the rivet plugin in a new project, or when the codebase structure has significantly changed.
-user-invocable: false
+description: Scan codebase and create .rivet/systems.yaml. Analyzes package boundaries, directories, and modules to propose systems. Use when no .rivet/systems.yaml exists or to refresh system definitions.
+user-invocable: true
 allowed-tools: Bash, Read, Glob, Grep, Write, AskUserQuestion
 ---
 

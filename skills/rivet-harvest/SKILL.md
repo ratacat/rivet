@@ -1,7 +1,7 @@
 ---
 name: rivet-harvest
-description: Extract decisions, requirements, and terminology from Claude Code transcripts. Use when the user wants to capture valuable context from conversations into rivet.yaml. Requires systems to already exist (run scan first).
-user-invocable: false
+description: Extract decisions, requirements, and terminology from conversation history into .rivet/systems.yaml. Use after rivet-scan to capture architectural decisions from transcripts.
+user-invocable: true
 allowed-tools: Bash, Read, Glob, Grep, Edit, Write, AskUserQuestion
 ---
 
