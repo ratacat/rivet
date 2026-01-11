@@ -8,7 +8,8 @@
     "rivet": "./dist/bin/rivet.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "src/templates"
   ],
   "scripts": {
     "dev": "tsx bin/rivet.ts",

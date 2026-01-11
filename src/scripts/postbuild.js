@@ -9,7 +9,8 @@ import { dirname, join } from 'path'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const binPath = join(__dirname, '..', '..', 'dist', 'bin', 'rivet.js')
+const projectRoot = join(__dirname, '..', '..')
+const binPath = join(projectRoot, 'dist', 'bin', 'rivet.js')
 
 const shebang = '#!/usr/bin/env node\n'
 let content = readFileSync(binPath, 'utf8')

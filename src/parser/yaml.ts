@@ -9,6 +9,31 @@ import type { RivetFile } from '../schema/types.js'
 const RIVET_DIR = '.rivet'
 const RIVET_FILENAME = 'systems.yaml'
 
+/**
+ * Find the package root by searching for package.json
+ */
+function findPackageRoot(startDir: string): string {
+  let dir = startDir
+  while (true) {
+    if (existsSync(join(dir, 'package.json'))) {
+      return dir
+    }
+    const parent = dirname(dir)
+    if (parent === dir) {
+      throw new Error('Could not find package root')
+    }
+    dir = parent
+  }
+}
+
+/**
+ * Get path to templates directory (works in dev and production)
+ */
+export function getTemplatesDir(): string {
+  const packageRoot = findPackageRoot(import.meta.dirname)
+  return join(packageRoot, 'src', 'templates')
+}
+
 export class RivetFileNotFoundError extends Error {
   constructor(searchPath: string) {
     super(`No .rivet/systems.yaml found in ${searchPath} or any parent directory`)
@@ -106,7 +131,8 @@ export function initRivetFile(
   }
 
   // Read template and substitute values
-  const templatePath = join(import.meta.dirname, '../templates/systems.yaml')
+  const templatesDir = getTemplatesDir()
+  const templatePath = join(templatesDir, 'systems.yaml')
   let content = readFileSync(templatePath, 'utf-8')
 
   // Replace placeholder values in the template (handles inline comments)
@@ -118,7 +144,7 @@ export function initRivetFile(
   // Copy template files
   const templates = ['AGENTS.md', 'CLAUDE.md', 'relationships.yaml']
   for (const template of templates) {
-    const srcPath = join(import.meta.dirname, '../templates', template)
+    const srcPath = join(templatesDir, template)
     const destPath = join(rivetDir, template)
     writeFileSync(destPath, readFileSync(srcPath, 'utf-8'), 'utf-8')
   }

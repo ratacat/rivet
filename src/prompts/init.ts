@@ -3,6 +3,7 @@
 
 import { readFileSync } from 'fs'
 import { join } from 'path'
+import { getTemplatesDir } from '../parser/yaml.js'
 
 /**
  * Generate the init prompt for discovering project systems
@@ -67,7 +68,7 @@ export function generateInitPrompt(): string {
   lines.push('```yaml')
 
   // Read and include the template
-  const templatePath = join(import.meta.dirname, '../templates/systems.yaml')
+  const templatePath = join(getTemplatesDir(), 'systems.yaml')
   const template = readFileSync(templatePath, 'utf-8')
   lines.push(template.trim())
 
