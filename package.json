@@ -1,19 +1,37 @@
 {
-  "name": "rivet",
-  "version": "0.0.1",
+  "name": "@ratacat/rivet",
+  "version": "0.1.0",
   "description": "Living architecture. Anchored requirements. Locked terminology.",
   "type": "module",
-  "main": "dist/bin/rivet.js",
+  "main": "dist/src/index.js",
   "bin": {
-    "rivet": "./bin/rivet.ts"
+    "rivet": "./dist/bin/rivet.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsx bin/rivet.ts",
-    "build": "tsc",
+    "build": "tsc && node src/scripts/postbuild.js",
+    "prepublishOnly": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ratacat/rivet"
+  },
+  "keywords": [
+    "architecture",
+    "terminology",
+    "requirements",
+    "ai-context",
+    "claude",
+    "cli"
+  ],
+  "author": "ratacat",
+  "license": "MIT",
   "dependencies": {
     "yaml": "^2.0.0"
   },

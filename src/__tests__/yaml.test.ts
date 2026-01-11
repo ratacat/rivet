@@ -31,8 +31,10 @@ describe('rivet yaml parser', () => {
       expect(filePath).toBe(join(tempDir, '.rivet', 'systems.yaml'))
 
       const content = readFileSync(filePath, 'utf-8')
-      expect(content).toContain('name: TestProject')
-      expect(content).toContain('purpose: A test project')
+      expect(content).toContain('name: "TestProject"')
+      expect(content).toContain('purpose: "A test project"')
+      // Should include template guidance
+      expect(content).toContain('GENERATION GUIDE FOR AI')
     })
 
     it('throws if .rivet/systems.yaml already exists', () => {
@@ -86,10 +88,8 @@ systems:
         project: {
           name: 'TestProject',
           purpose: 'A test project',
-          glossary: {
-            vibe_coding: {
-              definition: 'AI handles implementation',
-            },
+          terms: {
+            vibe_coding: 'AI handles implementation',
           },
         },
         systems: {

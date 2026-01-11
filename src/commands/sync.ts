@@ -14,16 +14,18 @@ Flags:
   --system-add <name> <description>
   --system-require <system> <statement>
   --system-decide <system> <statement>
-  --system-term <system> <term> [context]
+  --system-term-add <system> <term> [context]
+  --system-term-deprecate <system> <old> --to <new> --reason "..."
   --system-link <system> --depends-on|--used-by <other>
   --system-deprecate <name> [--replaced-by <new>]
   --term-define <term> <definition>
+  --term-deprecate <old> --to <new> --reason "..."
   --term-rename <old> <new>
 
 Examples:
   rivet sync --system-add Router "handles routing" --system-deprecate OldRouter
-  rivet sync --system-add Foo "desc" --system-require Foo "must do X"
-  rivet sync --term-define vibe_coding "AI handles implementation"
+  rivet sync --term-define rivet-prompt "CLI command for AI prompts"
+  rivet sync --term-deprecate rivet-context --to rivet-prompt --reason "Renamed for clarity"
 `.trim()
 
 export async function runSync(args: string[]): Promise<void> {

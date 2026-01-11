@@ -1,7 +1,8 @@
 // ABOUTME: rivet init - initialize Rivet in a project
-// ABOUTME: Creates .rivet/systems.yaml with project info
+// ABOUTME: Outputs init prompt if no file, creates file when --name provided
 
 import { initRivetFile, rivetFileExists } from '../parser/yaml.js'
+import { generateInitPrompt } from '../prompts/index.js'
 import { basename } from 'path'
 
 const USAGE = `
@@ -10,10 +11,14 @@ rivet init - Initialize Rivet in a project
 Usage:
   rivet init [options]
 
+Behavior:
+  - If .rivet/systems.yaml exists: silent exit
+  - If no file and no --name: output init prompt to guide setup
+  - If no file and --name provided: create the file
+
 Options:
-  --name <name>      Project name (defaults to directory name)
+  --name <name>      Project name (required to create file)
   --purpose <desc>   Project purpose/description
-  --minimal          Create minimal template (no prompts)
   -h, --help         Show this help
 `.trim()
 
@@ -24,13 +29,13 @@ export async function runInit(args: string[]): Promise<void> {
     return
   }
 
-  // Check if already initialized
+  // If already initialized, silent exit
   if (rivetFileExists()) {
-    throw new Error('.rivet/systems.yaml already exists in this project')
+    return
   }
 
   // Parse options
-  let name = basename(process.cwd())
+  let name: string | null = null
   let purpose = ''
 
   for (let i = 0; i < args.length; i++) {
@@ -41,6 +46,12 @@ export async function runInit(args: string[]): Promise<void> {
     }
   }
 
+  // If no --name provided, output the init prompt
+  if (!name) {
+    console.log(generateInitPrompt())
+    return
+  }
+
   // Create the file
   const filePath = initRivetFile(name, purpose || `${name} project`)
 
@@ -48,5 +59,8 @@ export async function runInit(args: string[]): Promise<void> {
   console.log('')
   console.log('Next steps:')
   console.log('  rivet system add <name> <description>  - Add a system')
-  console.log('  rivet context                          - View your config')
+  console.log('  rivet prompt session-start             - View context prompt')
+  console.log('')
+  console.log('Optional: Add drift-check to your pre-commit hook:')
+  console.log('  rivet prompt drift-check')
 }

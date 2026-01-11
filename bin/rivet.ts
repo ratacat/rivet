@@ -3,7 +3,8 @@
 // ABOUTME: Parses args and routes to command handlers
 
 import { runInit } from '../src/commands/init.js'
-import { runContext } from '../src/commands/context.js'
+import { runPrompt } from '../src/commands/prompt.js'
+import { runProject } from '../src/commands/project.js'
 import { runSystem } from '../src/commands/system.js'
 import { runTerm } from '../src/commands/term.js'
 import { runCheck } from '../src/commands/check.js'
@@ -18,10 +19,11 @@ Usage:
   rivet <command> [options]
 
 Commands:
-  init                   Initialize .rivet/systems.yaml in current directory
-  context [system...]    Output context for AI consumption
+  init                   Initialize .rivet/systems.yaml (outputs setup prompt if missing)
+  prompt [type]          Output prompts for AI (session-start, drift-check, init)
+  project <subcommand>   Manage project config (show, edit)
   system <subcommand>    Manage systems (add, show, list, edit, link, deprecate)
-  term <subcommand>      Manage glossary terms (define, rename, delete, list)
+  term <subcommand>      Manage project terms (define, rename, delete, list)
   check                  Verify terms exist in codebase
   sync [operations...]   Batch multiple operations
 
@@ -60,8 +62,12 @@ async function main() {
         await runInit(subArgs)
         break
 
-      case 'context':
-        await runContext(subArgs)
+      case 'prompt':
+        await runPrompt(subArgs)
+        break
+
+      case 'project':
+        await runProject(subArgs)
         break
 
       case 'system':

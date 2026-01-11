@@ -1,6 +1,24 @@
 #!/bin/bash
 # ABOUTME: SessionStart hook to output rivet context
-# ABOUTME: Always outputs context for Claude - similar to bd prime
+# ABOUTME: Checks for rivet CLI, prompts install if missing, outputs context
+
+# Check if rivet CLI is installed
+if ! command -v rivet &> /dev/null; then
+    cat << 'EOF'
+# CRITICAL: Rivet CLI Not Found
+
+**You MUST install the rivet CLI before doing anything else.** This is the first thing you do before following any other instructions.
+
+Run this command NOW:
+
+```bash
+cd /Users/jaredsmith/Projects/rivet && npm run build && npm link
+```
+
+Do not proceed with any other tasks until rivet is installed and available.
+EOF
+    exit 0
+fi
 
 # Check if .rivet/systems.yaml exists in current directory or parents
 find_rivet() {
@@ -28,9 +46,9 @@ This project has Rivet initialized at: $RIVET_FILE
 - **rivet-harvest**: Extract decisions/requirements from conversation
 
 ## Commands
-- \`rivet context\` - Show full project context
+- \`rivet prompt\` - Show session context prompt
 - \`rivet system list\` - List all systems
-- \`rivet term list\` - List glossary terms
+- \`rivet term list\` - List project terms
 EOF
 else
     cat << 'EOF'

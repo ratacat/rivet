@@ -105,18 +105,13 @@ export function initRivetFile(
     mkdirSync(rivetDir, { recursive: true })
   }
 
-  const data: RivetFile = {
-    project: {
-      name: projectName,
-      purpose: purpose,
-    },
-    systems: {},
-  }
+  // Read template and substitute values
+  const templatePath = join(import.meta.dirname, '../templates/systems.yaml')
+  let content = readFileSync(templatePath, 'utf-8')
 
-  const content = stringify(data, {
-    lineWidth: 0,
-    nullStr: '~',
-  })
+  // Replace placeholder values in the template (handles inline comments)
+  content = content.replace(/^(\s*name:\s*)""(.*)$/m, `$1"${projectName}"$2`)
+  content = content.replace(/^(\s*purpose:\s*)""(.*)$/m, `$1"${purpose}"$2`)
 
   writeFileSync(filePath, content, 'utf-8')
   return filePath

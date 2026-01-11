@@ -1,25 +1,26 @@
-// ABOUTME: rivet term <subcommand> - manage project-wide glossary terms
-// ABOUTME: Concepts, jargon, conventions that apply across the entire codebase
+// ABOUTME: rivet term <subcommand> - manage project-wide terms
+// ABOUTME: Domain language and meaningful code symbols that apply project-wide
 
 import { readRivetFile, writeRivetFile, findRivetFile } from '../parser/yaml.js'
 import { execSync } from 'child_process'
 
 const USAGE = `
-rivet term - Manage project-wide glossary terms
+rivet term - Manage project-wide terms
 
 Subcommands:
-  define <term> <definition>   Add a new glossary term
-  rename <old> <new>           Rename a term (adds 'previously' field)
-  delete <term>                Remove a term from glossary
-  list                         Show all glossary terms
+  define <term> <definition>                    Add a new term
+  deprecate <old> --to <new> --reason "..."     Deprecate a term
+  rename <old> <new>                            Rename a term
+  delete <term>                                 Remove a term
+  list                                          Show all terms
 
 NOTE: System-specific terms are managed via 'rivet system edit +term'
-Glossary terms are project-wide concepts not tied to any specific system.
+Project terms are domain language or meaningful code symbols.
 
 Examples:
-  rivet term define vibe_coding "AI handles implementation while human guides"
-  rivet term rename vibe_coding ai_assisted_development
-  rivet term delete old_concept
+  rivet term define rivet-prompt "CLI command that outputs AI prompts"
+  rivet term deprecate rivet-context --to rivet-prompt --reason "Renamed for clarity"
+  rivet term rename old_term new_term
   rivet term list
 `.trim()
 
@@ -46,6 +47,9 @@ export async function runTerm(args: string[]): Promise<void> {
     case 'define':
       await termDefine(args.slice(1))
       break
+    case 'deprecate':
+      await termDeprecate(args.slice(1))
+      break
     case 'rename':
       await termRename(args.slice(1))
       break
@@ -70,21 +74,67 @@ async function termDefine(args: string[]): Promise<void> {
 
   const data = readRivetFile()
 
-  if (!data.project.glossary) {
-    data.project.glossary = {}
+  if (!data.project.terms) {
+    data.project.terms = {}
   }
 
-  if (data.project.glossary[term]) {
+  if (data.project.terms[term]) {
     throw new Error(`Term "${term}" already exists. Use 'rivet term rename' to change it.`)
   }
 
-  data.project.glossary[term] = {
-    definition,
-  }
+  data.project.terms[term] = definition
 
   writeRivetFile(data)
   gitCommit(`rivet: term define ${term}`)
   console.log(`Defined: ${term}`)
+}
+
+async function termDeprecate(args: string[]): Promise<void> {
+  // Parse: <old> --to <new> --reason "..."
+  const oldTerm = args[0]
+
+  const toIdx = args.indexOf('--to')
+  const reasonIdx = args.indexOf('--reason')
+
+  if (!oldTerm || toIdx === -1 || reasonIdx === -1) {
+    throw new Error('Usage: rivet term deprecate <old> --to <new> --reason "..."')
+  }
+
+  const newTerm = args[toIdx + 1]
+  const reason = args.slice(reasonIdx + 1).join(' ')
+
+  if (!newTerm || !reason) {
+    throw new Error('Usage: rivet term deprecate <old> --to <new> --reason "..."')
+  }
+
+  const data = readRivetFile()
+
+  // Old term must exist in terms
+  if (!data.project.terms?.[oldTerm]) {
+    throw new Error(`Term "${oldTerm}" not found in project terms`)
+  }
+
+  // New term should exist (warn if not)
+  if (!data.project.terms[newTerm]) {
+    console.log(`Warning: "${newTerm}" is not defined. Consider defining it first.`)
+  }
+
+  // Remove from terms
+  delete data.project.terms[oldTerm]
+
+  // Add to deprecated-terms
+  if (!data.project['deprecated-terms']) {
+    data.project['deprecated-terms'] = {}
+  }
+
+  data.project['deprecated-terms'][oldTerm] = {
+    use: newTerm,
+    reason: reason,
+  }
+
+  writeRivetFile(data)
+  gitCommit(`rivet: term deprecate ${oldTerm} → ${newTerm}`)
+  console.log(`Deprecated: ${oldTerm} → ${newTerm}`)
 }
 
 async function termRename(args: string[]): Promise<void> {
@@ -97,28 +147,23 @@ async function termRename(args: string[]): Promise<void> {
 
   const data = readRivetFile()
 
-  if (!data.project.glossary?.[oldName]) {
+  if (!data.project.terms?.[oldName]) {
     throw new Error(`Term "${oldName}" not found`)
   }
 
-  if (data.project.glossary[newName]) {
+  if (data.project.terms[newName]) {
     throw new Error(`Term "${newName}" already exists`)
   }
 
-  // Copy the term with new name and add 'previously' field
-  const oldTerm = data.project.glossary[oldName]
-  data.project.glossary[newName] = {
-    ...oldTerm,
-    previously: oldName,
-  }
+  // Copy the definition to new name
+  data.project.terms[newName] = data.project.terms[oldName]
 
   // Delete old term
-  delete data.project.glossary[oldName]
+  delete data.project.terms[oldName]
 
   writeRivetFile(data)
   gitCommit(`rivet: term rename ${oldName} → ${newName}`)
   console.log(`Renamed: ${oldName} → ${newName}`)
-  console.log(`Note: 'previously' field will be removed by 'rivet check' once old term is purged from codebase`)
 }
 
 async function termDelete(args: string[]): Promise<void> {
@@ -130,11 +175,11 @@ async function termDelete(args: string[]): Promise<void> {
 
   const data = readRivetFile()
 
-  if (!data.project.glossary?.[term]) {
+  if (!data.project.terms?.[term]) {
     throw new Error(`Term "${term}" not found`)
   }
 
-  delete data.project.glossary[term]
+  delete data.project.terms[term]
 
   writeRivetFile(data)
   gitCommit(`rivet: term delete ${term}`)
@@ -144,14 +189,13 @@ async function termDelete(args: string[]): Promise<void> {
 async function termList(): Promise<void> {
   const data = readRivetFile()
 
-  if (!data.project.glossary || Object.keys(data.project.glossary).length === 0) {
+  if (!data.project.terms || Object.keys(data.project.terms).length === 0) {
     console.log('No glossary terms defined')
     return
   }
 
-  for (const [term, entry] of Object.entries(data.project.glossary)) {
-    const prev = entry.previously ? ` (previously: ${entry.previously})` : ''
-    console.log(`${term}${prev}`)
-    console.log(`  ${entry.definition}`)
+  for (const [term, definition] of Object.entries(data.project.terms)) {
+    console.log(`${term}`)
+    console.log(`  ${definition}`)
   }
 }

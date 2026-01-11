@@ -162,6 +162,7 @@ async function systemEdit(args: string[]): Promise<void> {
     console.log('  -decision <text>          - Remove decision')
     console.log('  +term <name> [context]    - Add locked term')
     console.log('  -term <name>              - Remove term')
+    console.log('  term-deprecate <old> --to <new> --reason "..."  - Deprecate a term')
     console.log('  status <value>            - Set status')
     console.log('  +depends_on <system>      - Add dependency')
     console.log('  +used_by <system>         - Add usage')
@@ -209,6 +210,41 @@ async function systemEdit(args: string[]): Promise<void> {
     if (system.terms) {
       delete system.terms[termName]
     }
+  } else if (field === 'term-deprecate') {
+    // Parse: term-deprecate <old> --to <new> --reason "..."
+    const oldTerm = args[2]
+    const restArgs = args.slice(3)
+    const toIdx = restArgs.indexOf('--to')
+    const reasonIdx = restArgs.indexOf('--reason')
+
+    if (!oldTerm || toIdx === -1 || reasonIdx === -1) {
+      throw new Error('Usage: rivet system edit <system> term-deprecate <old> --to <new> --reason "..."')
+    }
+
+    const newTerm = restArgs[toIdx + 1]
+    const reason = restArgs.slice(reasonIdx + 1).join(' ')
+
+    if (!newTerm || !reason) {
+      throw new Error('Usage: rivet system edit <system> term-deprecate <old> --to <new> --reason "..."')
+    }
+
+    // Old term must exist
+    if (!system.terms?.[oldTerm]) {
+      throw new Error(`Term "${oldTerm}" not found in system "${systemName}"`)
+    }
+
+    // Remove from terms
+    delete system.terms[oldTerm]
+
+    // Add to deprecated-terms
+    if (!system['deprecated-terms']) {
+      system['deprecated-terms'] = {}
+    }
+
+    system['deprecated-terms'][oldTerm] = {
+      use: newTerm,
+      reason: reason,
+    }
   } else if (field === 'status') {
     system.status = value as SystemStatus
   } else if (field === '+depends_on') {
@@ -221,11 +257,21 @@ async function systemEdit(args: string[]): Promise<void> {
     system.used_by.push(value)
   } else if (field === '-used_by') {
     system.used_by = system.used_by?.filter(u => u !== value)
-  } else if (field === '+differs_from') {
-    system.differs_from = system.differs_from ?? []
-    system.differs_from.push(value)
-  } else if (field === '-differs_from') {
-    system.differs_from = system.differs_from?.filter(d => d !== value)
+  } else if (field === '+boundaries') {
+    system.boundaries = system.boundaries ?? []
+    system.boundaries.push(value)
+  } else if (field === '-boundaries') {
+    system.boundaries = system.boundaries?.filter((b: string) => b !== value)
+  } else if (field === '+calls') {
+    system.calls = system.calls ?? []
+    system.calls.push(value)
+  } else if (field === '-calls') {
+    system.calls = system.calls?.filter((c: string) => c !== value)
+  } else if (field === '+called_by') {
+    system.called_by = system.called_by ?? []
+    system.called_by.push(value)
+  } else if (field === '-called_by') {
+    system.called_by = system.called_by?.filter((c: string) => c !== value)
   } else {
     throw new Error(`Unknown field: ${field}`)
   }
