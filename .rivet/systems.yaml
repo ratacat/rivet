@@ -4,12 +4,14 @@ project:
     - Passive and zero-maintenance - set it and forget it
     - Provides a linguinstic lens for AI to compare against code.
   terms:
-    harvest: One-time extraction of terms, decisions, and requirements from past Claude Code transcripts. Run around project initialization.
     linguistic-layer: The terminology and naming conventions used to describe code - distinct from the code itself
   deprecated-terms:
     glean:
       use: session-harvest
       reason: Renamed for clarity - session-harvest pairs with deep-harvest
+    harvest:
+      use: deep-harvest
+      reason: Renamed for clarity - deep-harvest is for mining old transcripts
   decisions: []
   requirements: []
 systems:
