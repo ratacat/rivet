@@ -5,6 +5,7 @@ project:
     - Provides a linguinstic lens for AI to compare against code.
   terms:
     linguistic-layer: The terminology and naming conventions used to describe code - distinct from the code itself
+    session-harvest: Per-session maintenance that captures emerging terms, decisions, requirements, and system changes from the current context run
   deprecated-terms:
     glean:
       use: session-harvest
