@@ -1,13 +1,12 @@
 project:
   name: Rivet
   principles:
-    - ""
-    - ""
-    - ""
     - Passive and zero-maintenance - set it and forget it
+    - Provides a linguinstic lens for AI to compare against code.
   terms:
     harvest: One-time extraction of terms, decisions, and requirements from past Claude Code transcripts. Run around project initialization.
     linguistic-layer: The terminology and naming conventions used to describe code - distinct from the code itself
+    glean: Per-session maintenance that captures emerging terms, decisions, requirements, system changes, and relationship updates from the current context run
   deprecated-terms: {}
   decisions: []
   requirements: []
