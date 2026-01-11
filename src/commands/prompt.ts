@@ -6,6 +6,7 @@ import {
   generateInitPrompt,
   generateSessionStartPrompt,
   generateDriftCheckPrompt,
+  generateHarvestPrompt,
 } from '../prompts/index.js'
 
 const USAGE = `
@@ -16,13 +17,15 @@ Usage:
 
 Types:
   session-start    Context prompt for session start (default)
-  drift-check      Verification prompt before commit
+  drift-check      Verification + session harvest before commit
+  harvest          Initial harvest from project history (one-time)
   init             Setup prompt when no systems.yaml exists
 
 Examples:
   rivet prompt                  # defaults to session-start
   rivet prompt session-start    # explicit session start
   rivet prompt drift-check      # pre-commit verification
+  rivet prompt harvest          # extract from conversation
 `.trim()
 
 export async function runPrompt(args: string[]): Promise<void> {
@@ -60,7 +63,11 @@ export async function runPrompt(args: string[]): Promise<void> {
       console.log(generateDriftCheckPrompt(data))
       break
 
+    case 'harvest':
+      console.log(generateHarvestPrompt(data))
+      break
+
     default:
-      throw new Error(`Unknown prompt type: ${promptType}. Use: session-start, drift-check, init`)
+      throw new Error(`Unknown prompt type: ${promptType}. Use: session-start, drift-check, harvest, init`)
   }
 }

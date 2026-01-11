@@ -1,7 +1,6 @@
 # Agent Instructions
 
 This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
-
 ## Quick Reference
 
 ```bash
@@ -38,3 +37,20 @@ bd sync               # Sync with git
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
 
+## TLDR Quick Reference (for AI Agents)
+
+Understand codebase:
+tldr structure . --lang python    # What exists (functions, classes)
+tldr calls .                      # Cross-file call graph
+
+Before modifying code:
+tldr impact <function>            # What breaks if I change this?
+
+Debugging:
+tldr slice <file> <func> <line>   # Minimal code affecting this line
+
+Find code by behavior:
+tldr semantic "validate user input"   # Semantic search (not text matching)
+
+After editing:
+tldr diagnostics <file>           # Type/lint errors

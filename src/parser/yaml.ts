@@ -114,6 +114,15 @@ export function initRivetFile(
   content = content.replace(/^(\s*purpose:\s*)""(.*)$/m, `$1"${purpose}"$2`)
 
   writeFileSync(filePath, content, 'utf-8')
+
+  // Copy template files
+  const templates = ['AGENTS.md', 'CLAUDE.md', 'relationships.yaml']
+  for (const template of templates) {
+    const srcPath = join(import.meta.dirname, '../templates', template)
+    const destPath = join(rivetDir, template)
+    writeFileSync(destPath, readFileSync(srcPath, 'utf-8'), 'utf-8')
+  }
+
   return filePath
 }
 

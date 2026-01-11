@@ -90,26 +90,32 @@ export function generateDriftCheckPrompt(data: RivetFile): string {
     }
   }
 
-  // Questions to answer
-  lines.push('## Checklist')
+  // Verification checklist
+  lines.push('## Verification')
   lines.push('')
-  lines.push('Review your changes and answer:')
+  lines.push('1. **Deprecated terms**: Did you accidentally use any deprecated terms? Fix before committing.')
+  lines.push('2. **Boundaries**: Did changes respect system boundaries?')
   lines.push('')
-  lines.push('1. **Terminology**: Did you introduce any new domain terms? If so, should they be defined?')
-  lines.push('   - Are proposed terms **specific enough**? Avoid generic words like "context", "data", "handler"')
-  lines.push('   - Consider prefixing with project/system name if the term could collide (e.g., "rivet-prompt" not "prompt")')
-  lines.push('2. **Deprecated terms**: Did you accidentally use any deprecated terms? Check and replace.')
-  lines.push('3. **Boundaries**: Did any changes cross system boundaries that should be noted?')
-  lines.push('4. **Decisions**: Did you make architectural decisions that should be recorded?')
-  lines.push('5. **Requirements**: Did you discover implicit requirements that should be explicit?')
+
+  // Session harvest
+  lines.push('## Session Harvest')
   lines.push('')
-  lines.push('If any of the above apply, use the `rivet` CLI to update the project:')
+  lines.push('What emerged this session that should be captured?')
+  lines.push('')
+  lines.push('1. **New terms**: Domain language used consistently with specific meaning')
+  lines.push('   - Specific enough? Avoid "context", "data", "handler"')
+  lines.push('   - Scoped? Consider "rivet-prompt" not "prompt"')
+  lines.push('2. **Decisions made**: Architectural choices with rationale (the WHY)')
+  lines.push('3. **Requirements discovered**: Constraints that should be explicit')
+  lines.push('4. **Boundary clarifications**: What\'s in/out of scope for a system')
+  lines.push('')
+  lines.push('If any apply, batch them with `rivet sync`:')
   lines.push('')
   lines.push('```bash')
-  lines.push('rivet project edit +term <name> "<definition>"')
-  lines.push('rivet project edit +decision "<rationale>"')
-  lines.push('rivet system edit <system> +term <name> "<definition>"')
-  lines.push('rivet system edit <system> +decision "<rationale>"')
+  lines.push('rivet sync \\')
+  lines.push('  --term-define <name> "<definition>" \\')
+  lines.push('  --system-decide <system> "<rationale>" \\')
+  lines.push('  --system-require <system> "<constraint>"')
   lines.push('```')
   lines.push('')
 
