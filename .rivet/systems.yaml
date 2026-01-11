@@ -6,6 +6,7 @@ project:
   terms:
     linguistic-layer: The terminology and naming conventions used to describe code - distinct from the code itself
     session-harvest: Per-session maintenance that captures emerging terms, decisions, requirements, and system changes from the current context run
+    deep-harvest: One-time extraction of terms, decisions, and requirements from old Claude Code transcripts. Run around project initialization.
   deprecated-terms:
     glean:
       use: session-harvest
