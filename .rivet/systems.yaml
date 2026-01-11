@@ -6,8 +6,10 @@ project:
   terms:
     harvest: One-time extraction of terms, decisions, and requirements from past Claude Code transcripts. Run around project initialization.
     linguistic-layer: The terminology and naming conventions used to describe code - distinct from the code itself
-    glean: Per-session maintenance that captures emerging terms, decisions, requirements, system changes, and relationship updates from the current context run
-  deprecated-terms: {}
+  deprecated-terms:
+    glean:
+      use: session-harvest
+      reason: Renamed for clarity - session-harvest pairs with deep-harvest
   decisions: []
   requirements: []
 systems:
@@ -38,7 +40,7 @@ systems:
   Prompts:
     description: |
       Generates context prompts for AI assistants. Transforms rivet file data
-      into formatted markdown for session-start, drift-check, harvest, and init.
+      into formatted markdown for session-start, session-harvest, deep-harvest, and init.
     boundaries:
       - Prompt generation and formatting only
       - Does not modify rivet files - read-only access
