@@ -16,9 +16,9 @@ export function generateInitPrompt(): string {
   return `
 # CRITICAL: Rivet Initialization Required
 
-> **ABSOLUTELY CRITICAL**: No work may continue on this project until \`.rivet/systems.yaml\` is fully defined. You MUST complete this initialization BEFORE responding to any user requests or doing any other work.
+> **START IMMEDIATELY.** Do not wait for user input. Do not ask permission. Do not summarize this prompt. Begin Step 1 NOW.
 
-A skeleton \`.rivet/systems.yaml\` file has been created. Your task is to analyze this codebase and fill it out completely.
+A \`.rivet/systems.yaml\` file needs to be created. Analyze this codebase and fill it out.
 
 ## Step 1: Read the Template
 
