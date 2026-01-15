@@ -68,40 +68,6 @@ function installTldr(dryRun: boolean): void {
   }
 }
 
-/**
- * Start TLDR daemon for the current project
- */
-function startTldrDaemon(dryRun: boolean): void {
-  console.log('\n🔄 TLDR Daemon')
-  console.log('   Background service for fast code indexing.')
-
-  if (!commandExists('tldr')) {
-    console.log('   ⚠ TLDR not installed, skipping daemon')
-    return
-  }
-
-  // Check if daemon is already running
-  try {
-    const status = execSync('tldr daemon status 2>&1', { encoding: 'utf-8' })
-    if (status.includes('running')) {
-      console.log('   ✓ Already running')
-      return
-    }
-  } catch {
-    // Not running, proceed to start
-  }
-
-  console.log('   Starting daemon...')
-  if (!dryRun) {
-    try {
-      execSync('tldr daemon start', { stdio: 'inherit' })
-      console.log('   ✓ Daemon started')
-    } catch {
-      console.log('   ⚠ Could not start daemon (may need to run in project directory)')
-    }
-  }
-}
-
 interface ClaudeSettings {
   hooks?: {
     SessionStart?: Array<{
@@ -135,7 +101,6 @@ export async function runInstall(args: string[]): Promise<void> {
   // Step 1: Install TLDR
   if (!skipTldr) {
     installTldr(dryRun)
-    startTldrDaemon(dryRun)
   }
 
   // Step 2: Copy hook script
