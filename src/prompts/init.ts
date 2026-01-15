@@ -203,6 +203,27 @@ ${template}
 
 ---
 
-**Remember**: Complete this initialization NOW before any other work. The user is waiting for you to set up Rivet so the project has proper architectural documentation.
+## Step 7: Completion Output
+
+When you're done, give the user a summary:
+
+1. **Codebase Analysis**: Describe the systems you detected and how they relate to each other. Give a brief architectural overview.
+
+2. **What You Created**: Explain that you just created \`.rivet/systems.yaml\` - the interface between their linguistic scaffolding (decisions, requirements, terminology) and the actual code.
+
+3. **How It Works**: This file gets reviewed and updated during coding sessions. As you work, new terms, decisions, and requirements can be captured automatically.
+
+4. **User Control**: The decisions, requirements, and terminology sections are safe to edit directly if they want, or they can ask you to add, modify, or remove entries.
+
+5. **About Terminology**: Explain that terms lock down domain language. When a term is deprecated, it maps to a replacement term with a reason - this helps maintain consistency even as vocabulary evolves. Old terms show up as warnings during code reviews.
+
+**Example completion message:**
+> "Done! I've created \`.rivet/systems.yaml\` with X systems: [brief list]. The CLI system handles argument parsing and routes to commands, which depend on the Parser for file I/O...
+>
+> This file is your project's linguistic scaffolding - it connects your architectural decisions to the code. As we work together, I'll capture new terms and decisions here. You can edit it directly or just ask me to update it.
+>
+> Terms you define become locked vocabulary. If you later rename something, deprecating the old term keeps a record and warns if the old name gets used."
+
+Now address whatever the user originally asked about.
 `.trim()
 }
