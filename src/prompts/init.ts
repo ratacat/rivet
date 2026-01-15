@@ -178,20 +178,30 @@ After editing, verify the file is valid:
 rivet system list
 \`\`\`
 
-## Step 6: Deep Harvest
+## Step 6: Scan for Naming Inconsistencies
 
-Once systems are defined, mine old transcripts for terms, decisions, and requirements:
+Look through the function/class names from \`tldr structure\` for linguistic drift:
+
+- **Same concept, different names**: \`getUserData\` vs \`fetchUserInfo\` vs \`readUserRecord\`
+- **Inconsistent verbs**: mixing \`get\`, \`fetch\`, \`read\`, \`load\` for similar operations
+- **Inconsistent nouns**: \`config\` vs \`settings\` vs \`options\`
+- **Old names lingering**: renamed something but old name still appears elsewhere
+
+If you find inconsistencies, suggest:
+1. Which term should be canonical (locked)
+2. Which terms should be deprecated → pointing to the canonical one
+
+This helps enforce consistent vocabulary. When deprecated terms appear in code, they get flagged for correction.
+
+## Step 7: Deep Harvest (Optional)
+
+If this project has old Claude Code transcripts, mine them for terms, decisions, and requirements:
 
 \`\`\`bash
 rivet prompt deep-harvest
 \`\`\`
 
-This outputs a prompt that guides you through reviewing:
-- Old Claude Code transcripts in \`~/.claude/projects/\`
-- README and documentation
-- Commit messages and PR descriptions
-
-Extract domain terms, architectural decisions, and requirements that should be locked down.
+This guides you through reviewing \`~/.claude/projects/\` transcripts, README, commit messages, and PR descriptions.
 
 ## Template Reference
 
@@ -203,7 +213,7 @@ ${template}
 
 ---
 
-## Step 7: Completion Output
+## Step 8: Completion Output
 
 When you're done, give the user a summary:
 
