@@ -1,6 +1,6 @@
 #!/bin/bash
-# ABOUTME: Session start hook that injects rivet context
-# ABOUTME: Ensures rivet CLI exists, then runs rivet init to inject session context
+# ABOUTME: SessionStart hook that injects rivet context once per session
+# ABOUTME: Ensures rivet CLI exists, then runs rivet init to inject context
 
 # Check if rivet CLI is installed
 if ! command -v rivet &> /dev/null; then

@@ -68,12 +68,15 @@ function installTldr(dryRun: boolean): void {
   }
 }
 
+interface HookEntry {
+  matcher: string
+  hooks: Array<{ type: string; command: string }>
+}
+
 interface ClaudeSettings {
   hooks?: {
-    SessionStart?: Array<{
-      matcher: string
-      hooks: Array<{ type: string; command: string }>
-    }>
+    SessionStart?: HookEntry[]
+    UserPromptSubmit?: HookEntry[]
     [key: string]: unknown
   }
   [key: string]: unknown
@@ -91,7 +94,8 @@ export async function runInstall(args: string[]): Promise<void> {
   const claudeDir = join(home, '.claude')
   const hooksDir = join(claudeDir, 'hooks', 'rivet')
   const settingsPath = join(claudeDir, 'settings.json')
-  const hookDest = join(hooksDir, 'session-inject.sh')
+  const sessionHookDest = join(hooksDir, 'session-inject.sh')
+  const promptHookDest = join(hooksDir, 'prompt-inject.sh')
 
   console.log('Installing Rivet...')
   if (dryRun) {
@@ -103,30 +107,40 @@ export async function runInstall(args: string[]): Promise<void> {
     installTldr(dryRun)
   }
 
-  // Step 2: Copy hook script
-  console.log('\n📁 Session Hook')
-  console.log('   Injects rivet context at the start of each Claude Code session.')
-
+  // Step 2: Copy hook scripts
   const templatesDir = getTemplatesDir()
   const hooksSourceDir = join(dirname(templatesDir), 'hooks')
-  const hookSource = join(hooksSourceDir, 'session-inject.sh')
 
-  if (!existsSync(hookSource)) {
-    throw new Error(`Hook source not found: ${hookSource}`)
+  console.log('\n📁 Hooks')
+
+  // Session hook - runs once at session start for context
+  const sessionHookSource = join(hooksSourceDir, 'session-inject.sh')
+  if (!existsSync(sessionHookSource)) {
+    throw new Error(`Hook source not found: ${sessionHookSource}`)
   }
-
-  console.log(`   Copying to ${hookDest}`)
+  console.log('   session-inject.sh: Injects context at session start')
   if (!dryRun) {
     mkdirSync(hooksDir, { recursive: true })
-    copyFileSync(hookSource, hookDest)
+    copyFileSync(sessionHookSource, sessionHookDest)
     const { chmodSync } = await import('fs')
-    chmodSync(hookDest, 0o755)
+    chmodSync(sessionHookDest, 0o755)
   }
-  console.log('   ✓ Hook installed')
+
+  // Prompt hook - quick check on each prompt, only outputs if init needed
+  const promptHookSource = join(hooksSourceDir, 'prompt-inject.sh')
+  if (!existsSync(promptHookSource)) {
+    throw new Error(`Hook source not found: ${promptHookSource}`)
+  }
+  console.log('   prompt-inject.sh: Forces init if needed (fast exit otherwise)')
+  if (!dryRun) {
+    copyFileSync(promptHookSource, promptHookDest)
+    const { chmodSync } = await import('fs')
+    chmodSync(promptHookDest, 0o755)
+  }
+  console.log('   ✓ Hooks installed')
 
   // Step 3: Update settings.json
   console.log('\n⚙️  Claude Code Settings')
-  console.log('   Adding SessionStart hook to trigger rivet on each session.')
 
   if (!existsSync(settingsPath)) {
     throw new Error(`Claude Code settings not found: ${settingsPath}\nIs Claude Code installed?`)
@@ -137,33 +151,47 @@ export async function runInstall(args: string[]): Promise<void> {
   if (!settings.hooks) {
     settings.hooks = {}
   }
+
+  let settingsChanged = false
+
+  // Add SessionStart hook
   if (!settings.hooks.SessionStart) {
     settings.hooks.SessionStart = []
   }
-
-  const alreadyInstalled = settings.hooks.SessionStart.some(entry =>
+  const sessionHookInstalled = settings.hooks.SessionStart.some(entry =>
     entry.hooks?.some(h => h.command?.includes('rivet') && h.command?.includes('session-inject'))
   )
-
-  if (alreadyInstalled) {
-    console.log('   ✓ Already configured')
-  } else {
-    const newHook = {
+  if (!sessionHookInstalled) {
+    settings.hooks.SessionStart.push({
       matcher: '',
-      hooks: [
-        {
-          type: 'command',
-          command: hookDest
-        }
-      ]
-    }
+      hooks: [{ type: 'command', command: sessionHookDest }]
+    })
+    settingsChanged = true
+    console.log('   ✓ SessionStart hook added')
+  } else {
+    console.log('   ✓ SessionStart hook already configured')
+  }
 
-    settings.hooks.SessionStart.push(newHook)
+  // Add UserPromptSubmit hook
+  if (!settings.hooks.UserPromptSubmit) {
+    settings.hooks.UserPromptSubmit = []
+  }
+  const promptHookInstalled = settings.hooks.UserPromptSubmit.some(entry =>
+    entry.hooks?.some(h => h.command?.includes('rivet') && h.command?.includes('prompt-inject'))
+  )
+  if (!promptHookInstalled) {
+    settings.hooks.UserPromptSubmit.push({
+      matcher: '',
+      hooks: [{ type: 'command', command: promptHookDest }]
+    })
+    settingsChanged = true
+    console.log('   ✓ UserPromptSubmit hook added')
+  } else {
+    console.log('   ✓ UserPromptSubmit hook already configured')
+  }
 
-    if (!dryRun) {
-      writeFileSync(settingsPath, JSON.stringify(settings, null, 2))
-    }
-    console.log('   ✓ Hook added to settings.json')
+  if (settingsChanged && !dryRun) {
+    writeFileSync(settingsPath, JSON.stringify(settings, null, 2))
   }
 
   // Summary
@@ -171,7 +199,7 @@ export async function runInstall(args: string[]): Promise<void> {
   console.log('✅ Rivet installed successfully!\n')
   console.log('What happens next:')
   console.log('  1. Restart Claude Code')
-  console.log('  2. On session start, rivet will check for .rivet/systems.yaml')
-  console.log('  3. If missing, you\'ll be guided through initialization')
-  console.log('  4. Once set up, session context is injected automatically')
+  console.log('  2. SessionStart injects context once per session')
+  console.log('  3. UserPromptSubmit forces init if .rivet/systems.yaml missing')
+  console.log('  4. Once initialized, context flows automatically')
 }
