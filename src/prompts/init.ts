@@ -180,11 +180,12 @@ rivet system list
 
 ## Step 6: Scan for Naming Inconsistencies
 
-Look through the function/class names from \`tldr structure\` for linguistic drift:
+Look through function names, class names, file names, and folder names for linguistic drift:
 
-- **Same concept, different names**: \`getUserData\` vs \`fetchUserInfo\` vs \`readUserRecord\`
+- **Same concept, different names**: \`getUserData\` vs \`fetchUserInfo\`, \`utils/\` vs \`helpers/\`
 - **Inconsistent verbs**: mixing \`get\`, \`fetch\`, \`read\`, \`load\` for similar operations
-- **Inconsistent nouns**: \`config\` vs \`settings\` vs \`options\`
+- **Inconsistent nouns**: \`config\` vs \`settings\` vs \`options\`, \`lib/\` vs \`src/\` vs \`core/\`
+- **File naming styles**: mixing \`kebab-case.ts\`, \`camelCase.ts\`, \`PascalCase.ts\`
 - **Old names lingering**: renamed something but old name still appears elsewhere
 
 If you find inconsistencies, suggest:
