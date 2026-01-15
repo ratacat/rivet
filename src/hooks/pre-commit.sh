@@ -1,6 +1,6 @@
 #!/bin/bash
-# ABOUTME: Pre-commit hook to output drift check prompt
-# ABOUTME: Reminds AI to verify changes against systems.yaml before commit
+# ABOUTME: Pre-commit hook to output session-harvest prompt
+# ABOUTME: Reminds AI to capture emerging terms/decisions before commit
 
 # Check if rivet CLI is installed
 if ! command -v rivet &> /dev/null; then
@@ -23,7 +23,7 @@ find_rivet() {
 RIVET_FILE=$(find_rivet)
 
 if [ -n "$RIVET_FILE" ]; then
-    rivet prompt drift-check
+    rivet prompt session-harvest
 fi
 
 exit 0

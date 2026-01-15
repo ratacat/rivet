@@ -10,10 +10,16 @@
  * - system terms = domain language, NOT method names (TLDR handles those)
  * - status transitions: active → deprecated → deleted from file
  * - boundaries define what's in-scope vs out-of-scope
- * - calls/called_by can be auto-generated from TLDR static analysis
+ * - relationships are tuples: [type, target_system]
  */
 
 export type SystemStatus = 'active' | 'deprecated' | `replacing:${string}`
+
+/** Relationship types between systems */
+export type RelationType = 'calls' | 'called_by' | 'depends_on' | 'used_by'
+
+/** A relationship tuple: [type, target_system] */
+export type Relationship = [RelationType, string]
 
 /** A deprecated term pointing to its replacement */
 export interface DeprecatedTerm {
@@ -38,14 +44,8 @@ export interface System {
   'deprecated-terms'?: Record<string, DeprecatedTerm>
   /** What's in-scope vs out-of-scope for this system */
   boundaries?: string[]
-  /** Compile-time dependencies - what this needs to exist */
-  depends_on?: string[]
-  /** Compile-time reverse dependencies - what needs this */
-  used_by?: string[]
-  /** Runtime - systems this invokes (can be auto-generated from TLDR) */
-  calls?: string[]
-  /** Runtime - systems that invoke this (can be auto-generated from TLDR) */
-  called_by?: string[]
+  /** Relationships to other systems as tuples: [type, target_system] */
+  relationships?: Relationship[]
 }
 
 export interface Project {

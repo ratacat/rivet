@@ -3,5 +3,5 @@
 
 export { generateInitPrompt } from './init.js'
 export { generateSessionStartPrompt } from './session-start.js'
-export { generateDriftCheckPrompt } from './drift-check.js'
-export { generateHarvestPrompt } from './harvest.js'
+export { generateSessionHarvestPrompt } from './session-harvest.js'
+export { generateDeepHarvestPrompt } from './deep-harvest.js'

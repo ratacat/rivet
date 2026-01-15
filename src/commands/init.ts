@@ -1,8 +1,8 @@
 // ABOUTME: rivet init - initialize Rivet in a project
-// ABOUTME: Outputs init prompt if no file, creates file when --name provided
+// ABOUTME: Creates skeleton file if missing, outputs init prompt for setup
 
-import { initRivetFile, rivetFileExists } from '../parser/yaml.js'
-import { generateInitPrompt } from '../prompts/index.js'
+import { initRivetFile, rivetFileExists, readRivetFile } from '../parser/yaml.js'
+import { generateInitPrompt, generateSessionStartPrompt } from '../prompts/index.js'
 import { basename } from 'path'
 
 const USAGE = `
@@ -12,15 +12,25 @@ Usage:
   rivet init [options]
 
 Behavior:
-  - If .rivet/systems.yaml exists: silent exit
-  - If no file and no --name: output init prompt to guide setup
-  - If no file and --name provided: create the file
+  - If .rivet/systems.yaml exists with systems defined: output session context
+  - If .rivet/systems.yaml exists but empty: output init prompt
+  - If no file: create skeleton file, then output init prompt
 
 Options:
-  --name <name>      Project name (required to create file)
-  --purpose <desc>   Project purpose/description
   -h, --help         Show this help
 `.trim()
+
+/**
+ * Check if rivet file has meaningful content (systems defined)
+ */
+function hasSystemsDefined(): boolean {
+  try {
+    const data = readRivetFile()
+    return !!(data.systems && Object.keys(data.systems).length > 0)
+  } catch {
+    return false
+  }
+}
 
 export async function runInit(args: string[]): Promise<void> {
   // Parse args
@@ -29,38 +39,22 @@ export async function runInit(args: string[]): Promise<void> {
     return
   }
 
-  // If already initialized, silent exit
   if (rivetFileExists()) {
-    return
-  }
-
-  // Parse options
-  let name: string | null = null
-  let purpose = ''
-
-  for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--name' && args[i + 1]) {
-      name = args[++i]
-    } else if (args[i] === '--purpose' && args[i + 1]) {
-      purpose = args[++i]
+    // File exists - check if it has systems defined
+    if (hasSystemsDefined()) {
+      // Has systems - output session context
+      const data = readRivetFile()
+      console.log(generateSessionStartPrompt(data))
+    } else {
+      // Empty/skeleton - output init prompt to fill it out
+      console.log(generateInitPrompt())
     }
-  }
-
-  // If no --name provided, output the init prompt
-  if (!name) {
-    console.log(generateInitPrompt())
     return
   }
 
-  // Create the file
-  const filePath = initRivetFile(name, purpose || `${name} project`)
+  // No file exists - create skeleton and output init prompt
+  const projectName = basename(process.cwd())
+  initRivetFile(projectName, '')
 
-  console.log(`Created ${filePath}`)
-  console.log('')
-  console.log('Next steps:')
-  console.log('  rivet system add <name> <description>  - Add a system')
-  console.log('  rivet prompt session-start             - View context prompt')
-  console.log('')
-  console.log('Optional: Add drift-check to your pre-commit hook:')
-  console.log('  rivet prompt drift-check')
+  console.log(generateInitPrompt())
 }

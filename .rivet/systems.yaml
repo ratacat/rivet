@@ -4,7 +4,7 @@ project:
     - Passive and zero-maintenance - set it and forget it
     - Provides a linguinstic lens for AI to compare against code.
   terms:
-    linguistic-layer: The terminology and naming conventions used to describe code - distinct from the code itself
+    linguistic-layer: A general terminology and naming conventions used to describe code - distinct from the code itself
     session-harvest: Per-session maintenance that captures emerging terms, decisions, requirements, and system changes from the current context run
     deep-harvest: One-time extraction of terms, decisions, and requirements from old Claude Code transcripts. Run around project initialization.
   deprecated-terms:

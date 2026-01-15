@@ -125,11 +125,12 @@ systems:
   #     - "Authentication only - authorization handled by PermissionService"
   #     - "Token validation only - token storage handled by Redis"
   #
-  #   # Relationships (auto-generate from TLDR static analysis)
-  #   depends_on: []    # compile-time: what this needs to exist
-  #   used_by: []       # compile-time: what needs this
-  #   calls: []         # runtime: systems this invokes
-  #   called_by: []     # runtime: systems that invoke this
+  #   # Relationships: tuples of [type, target_system]
+  #   # Types: calls (runtime), called_by, depends_on (compile-time), used_by
+  #   # Prefer forward relationships (calls, depends_on) over inverse (called_by, used_by)
+  #   relationships:
+  #     - [calls, SessionManager]
+  #     - [depends_on, Schema]
   #
   #   # Status: active (default) | deprecated | replacing:OtherSystem
   #   status: active

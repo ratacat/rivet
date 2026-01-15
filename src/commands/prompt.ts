@@ -5,8 +5,8 @@ import { readRivetFile, rivetFileExists } from '../parser/yaml.js'
 import {
   generateInitPrompt,
   generateSessionStartPrompt,
-  generateDriftCheckPrompt,
-  generateHarvestPrompt,
+  generateSessionHarvestPrompt,
+  generateDeepHarvestPrompt,
 } from '../prompts/index.js'
 
 const USAGE = `
@@ -16,16 +16,16 @@ Usage:
   rivet prompt <type>
 
 Types:
-  session-start    Context prompt for session start (default)
-  drift-check      Verification + session harvest before commit
-  harvest          Initial harvest from project history (one-time)
-  init             Setup prompt when no systems.yaml exists
+  session-start      Context prompt for session start (default)
+  session-harvest    Per-session maintenance before commit
+  deep-harvest       One-time mining of old transcripts
+  init               Setup prompt when no systems.yaml exists
 
 Examples:
   rivet prompt                  # defaults to session-start
   rivet prompt session-start    # explicit session start
-  rivet prompt drift-check      # pre-commit verification
-  rivet prompt harvest          # extract from conversation
+  rivet prompt session-harvest  # per-session maintenance
+  rivet prompt deep-harvest     # mine old transcripts
 `.trim()
 
 export async function runPrompt(args: string[]): Promise<void> {
@@ -59,15 +59,15 @@ export async function runPrompt(args: string[]): Promise<void> {
       console.log(generateSessionStartPrompt(data))
       break
 
-    case 'drift-check':
-      console.log(generateDriftCheckPrompt(data))
+    case 'session-harvest':
+      console.log(generateSessionHarvestPrompt(data))
       break
 
-    case 'harvest':
-      console.log(generateHarvestPrompt(data))
+    case 'deep-harvest':
+      console.log(generateDeepHarvestPrompt(data))
       break
 
     default:
-      throw new Error(`Unknown prompt type: ${promptType}. Use: session-start, drift-check, harvest, init`)
+      throw new Error(`Unknown prompt type: ${promptType}. Use: session-start, session-harvest, deep-harvest, init`)
   }
 }

@@ -3,6 +3,7 @@
 // ABOUTME: Parses args and routes to command handlers
 
 import { runInit } from '../src/commands/init.js'
+import { runInstall } from '../src/commands/install.js'
 import { runPrompt } from '../src/commands/prompt.js'
 import { runProject } from '../src/commands/project.js'
 import { runSystem } from '../src/commands/system.js'
@@ -19,8 +20,9 @@ Usage:
   rivet <command> [options]
 
 Commands:
+  install                Install rivet hooks into Claude Code
   init                   Initialize .rivet/systems.yaml (outputs setup prompt if missing)
-  prompt [type]          Output prompts for AI (session-start, drift-check, init)
+  prompt [type]          Output prompts for AI (session-start, session-harvest, deep-harvest, init)
   project <subcommand>   Manage project config (show, edit)
   system <subcommand>    Manage systems (add, show, list, edit, link, deprecate)
   term <subcommand>      Manage project terms (define, rename, delete, list)
@@ -58,6 +60,10 @@ async function main() {
 
   try {
     switch (command) {
+      case 'install':
+        await runInstall(subArgs)
+        break
+
       case 'init':
         await runInit(subArgs)
         break

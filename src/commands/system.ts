@@ -4,7 +4,7 @@
 import { readRivetFile, writeRivetFile, findRivetFile } from '../parser/yaml.js'
 import { execSync } from 'child_process'
 import { stringify } from 'yaml'
-import type { System, SystemStatus } from '../schema/types.js'
+import type { System, SystemStatus, RelationType, Relationship } from '../schema/types.js'
 
 const USAGE = `
 rivet system - Manage systems
@@ -14,7 +14,7 @@ Subcommands:
   show <name>                           Show details of one system
   list [--status <status>]              List all systems
   edit <system> <field> [+|-]<value>    Edit a system field
-  link <system> --depends-on|--used-by <other>  Add relationship
+  link <system> <type> <target>         Add relationship tuple
   deprecate <system> [--replaced-by <new>]      Mark deprecated
 
 Edit fields:
@@ -25,14 +25,16 @@ Edit fields:
   +term <name> [context]  add locked term with optional context
   -term <name>   remove term
   status         set status (active, deprecated, replacing:<system>)
-  +depends_on    add dependency
-  +used_by       add usage
-  +differs_from  add disambiguation
+  +relationship <type> <target>  add relationship tuple
+  -relationship <type> <target>  remove relationship tuple
+
+Relationship types: calls, called_by, depends_on, used_by
 
 Examples:
   rivet system add Router "handles URL routing"
   rivet system edit Router +requirement "must support nested routes"
   rivet system edit Router +term createRouter "factory function"
+  rivet system link Router calls Commands
   rivet system deprecate OldRouter --replaced-by Router
 `.trim()
 
@@ -164,9 +166,10 @@ async function systemEdit(args: string[]): Promise<void> {
     console.log('  -term <name>              - Remove term')
     console.log('  term-deprecate <old> --to <new> --reason "..."  - Deprecate a term')
     console.log('  status <value>            - Set status')
-    console.log('  +depends_on <system>      - Add dependency')
-    console.log('  +used_by <system>         - Add usage')
-    console.log('  +differs_from <system>    - Add disambiguation')
+    console.log('  +relationship <type> <target>  - Add relationship tuple')
+    console.log('  -relationship <type> <target>  - Remove relationship tuple')
+    console.log('  +boundary <text>          - Add boundary')
+    console.log('  -boundary <text>          - Remove boundary')
     return
   }
 
@@ -247,31 +250,33 @@ async function systemEdit(args: string[]): Promise<void> {
     }
   } else if (field === 'status') {
     system.status = value as SystemStatus
-  } else if (field === '+depends_on') {
-    system.depends_on = system.depends_on ?? []
-    system.depends_on.push(value)
-  } else if (field === '-depends_on') {
-    system.depends_on = system.depends_on?.filter(d => d !== value)
-  } else if (field === '+used_by') {
-    system.used_by = system.used_by ?? []
-    system.used_by.push(value)
-  } else if (field === '-used_by') {
-    system.used_by = system.used_by?.filter(u => u !== value)
-  } else if (field === '+boundaries') {
+  } else if (field === '+relationship') {
+    const relType = args[2] as RelationType
+    const target = args[3]
+    if (!relType || !target) {
+      throw new Error('Usage: rivet system edit <system> +relationship <type> <target>')
+    }
+    const validTypes: RelationType[] = ['calls', 'called_by', 'depends_on', 'used_by']
+    if (!validTypes.includes(relType)) {
+      throw new Error(`Invalid relationship type: ${relType}. Valid types: ${validTypes.join(', ')}`)
+    }
+    system.relationships = system.relationships ?? []
+    const exists = system.relationships.some(([t, s]) => t === relType && s === target)
+    if (!exists) {
+      system.relationships.push([relType, target])
+    }
+  } else if (field === '-relationship') {
+    const relType = args[2] as RelationType
+    const target = args[3]
+    if (!relType || !target) {
+      throw new Error('Usage: rivet system edit <system> -relationship <type> <target>')
+    }
+    system.relationships = system.relationships?.filter(([t, s]) => !(t === relType && s === target))
+  } else if (field === '+boundary') {
     system.boundaries = system.boundaries ?? []
     system.boundaries.push(value)
-  } else if (field === '-boundaries') {
+  } else if (field === '-boundary') {
     system.boundaries = system.boundaries?.filter((b: string) => b !== value)
-  } else if (field === '+calls') {
-    system.calls = system.calls ?? []
-    system.calls.push(value)
-  } else if (field === '-calls') {
-    system.calls = system.calls?.filter((c: string) => c !== value)
-  } else if (field === '+called_by') {
-    system.called_by = system.called_by ?? []
-    system.called_by.push(value)
-  } else if (field === '-called_by') {
-    system.called_by = system.called_by?.filter((c: string) => c !== value)
   } else {
     throw new Error(`Unknown field: ${field}`)
   }
@@ -283,9 +288,16 @@ async function systemEdit(args: string[]): Promise<void> {
 
 async function systemLink(args: string[]): Promise<void> {
   const systemName = args[0]
+  const relType = args[1] as RelationType
+  const target = args[2]
 
-  if (!systemName) {
-    throw new Error('Usage: rivet system link <system> --depends-on|--used-by <other>')
+  if (!systemName || !relType || !target) {
+    throw new Error('Usage: rivet system link <system> <type> <target>\nTypes: calls, called_by, depends_on, used_by')
+  }
+
+  const validTypes: RelationType[] = ['calls', 'called_by', 'depends_on', 'used_by']
+  if (!validTypes.includes(relType)) {
+    throw new Error(`Invalid relationship type: ${relType}. Valid types: ${validTypes.join(', ')}`)
   }
 
   const data = readRivetFile()
@@ -295,32 +307,16 @@ async function systemLink(args: string[]): Promise<void> {
   }
 
   const system = data.systems[systemName]
+  system.relationships = system.relationships ?? []
 
-  if (args.includes('--depends-on')) {
-    const idx = args.indexOf('--depends-on')
-    const other = args[idx + 1]
-    if (!other) throw new Error('Missing system name after --depends-on')
-
-    system.depends_on = system.depends_on ?? []
-    if (!system.depends_on.includes(other)) {
-      system.depends_on.push(other)
-    }
-  } else if (args.includes('--used-by')) {
-    const idx = args.indexOf('--used-by')
-    const other = args[idx + 1]
-    if (!other) throw new Error('Missing system name after --used-by')
-
-    system.used_by = system.used_by ?? []
-    if (!system.used_by.includes(other)) {
-      system.used_by.push(other)
-    }
-  } else {
-    throw new Error('Must specify --depends-on or --used-by')
+  const exists = system.relationships.some(([t, s]) => t === relType && s === target)
+  if (!exists) {
+    system.relationships.push([relType, target])
   }
 
   writeRivetFile(data)
-  gitCommit(`rivet: system link ${systemName}`)
-  console.log(`Updated ${systemName}`)
+  gitCommit(`rivet: system link ${systemName} ${relType} ${target}`)
+  console.log(`Added relationship: ${systemName} ${relType} ${target}`)
 }
 
 async function systemDeprecate(args: string[]): Promise<void> {

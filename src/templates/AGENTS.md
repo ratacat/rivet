@@ -7,18 +7,18 @@
 ### Every Session
 1. **Session start**: `rivet prompt` loads project context (terms, systems, boundaries)
 2. **During work**: Use locked terms consistently, respect system boundaries
-3. **Before commit**: `rivet prompt drift-check` verifies alignment + session harvest
+3. **Before commit**: `rivet prompt session-harvest` captures emerging terms/decisions + verifies alignment
 
 ### One-Time Setup
-- **Initial harvest**: `rivet prompt harvest` mines project history for requirements/decisions
+- **Deep harvest**: `rivet prompt deep-harvest` mines old transcripts for requirements/decisions
 
 ## Quick Reference
 
 ```bash
 # Prompts
 rivet prompt                    # Session start context
-rivet prompt drift-check        # Verification + session harvest
-rivet prompt harvest            # Initial harvest (one-time)
+rivet prompt session-harvest    # Per-session maintenance
+rivet prompt deep-harvest       # One-time mining of old transcripts
 
 # Batch operations (preferred)
 rivet sync \
