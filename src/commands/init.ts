@@ -4,6 +4,28 @@
 import { initRivetFile, rivetFileExists, readRivetFile } from '../parser/yaml.js'
 import { generateInitPrompt, generateSessionStartPrompt } from '../prompts/index.js'
 import { basename } from 'path'
+import { execSync } from 'child_process'
+
+/**
+ * Ensure TLDR daemon is running for this project
+ */
+function ensureTldrDaemon(): void {
+  try {
+    // Check if tldr exists
+    execSync('which tldr', { stdio: 'ignore' })
+
+    // Check if daemon is already running
+    const status = execSync('tldr daemon status 2>&1', { encoding: 'utf-8' })
+    if (status.includes('running')) {
+      return
+    }
+
+    // Start daemon silently
+    execSync('tldr daemon start', { stdio: 'ignore' })
+  } catch {
+    // TLDR not installed or daemon failed - ignore silently
+  }
+}
 
 const USAGE = `
 rivet init - Initialize Rivet in a project
@@ -38,6 +60,9 @@ export async function runInit(args: string[]): Promise<void> {
     console.log(USAGE)
     return
   }
+
+  // Ensure TLDR daemon is running for this project
+  ensureTldrDaemon()
 
   if (rivetFileExists()) {
     // File exists - check if it has systems defined
