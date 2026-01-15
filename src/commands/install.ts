@@ -209,6 +209,4 @@ export async function runInstall(args: string[]): Promise<void> {
   console.log('  2. On session start, rivet will check for .rivet/systems.yaml')
   console.log('  3. If missing, you\'ll be guided through initialization')
   console.log('  4. Once set up, session context is injected automatically')
-  console.log('\nFor existing projects with transcripts, run:')
-  console.log('  rivet prompt deep-harvest')
 }
