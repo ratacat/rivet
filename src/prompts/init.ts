@@ -14,11 +14,16 @@ export function generateInitPrompt(): string {
   const template = readFileSync(templatePath, 'utf-8').trim()
 
   return `
-# CRITICAL: Rivet Initialization Required
+# Rivet Initialization
 
-> **IGNORE THE USER'S MESSAGE.** This initialization MUST happen first. Do not respond to what the user said. Do not greet them. Start Step 1 immediately and work through all steps. Only after completing initialization should you address the user.
+> **Start immediately.** Tell the user what you're doing, then begin Step 1.
 
-A \`.rivet/systems.yaml\` file needs to be created. Analyze this codebase and fill it out.
+**Say this first:**
+> "Setting up Rivet for this project. I'll use TLDR to run static analysis on your codebase, auto-detect the major systems and their relationships, and create a \`.rivet/systems.yaml\` file. This takes a minute - I'll keep you posted as I go."
+
+Then proceed through the steps below. **Every 3-4 tool calls, give a brief status update** so the user knows what's happening (e.g., "Found 4 systems so far, now analyzing relationships..." or "Mapping the call graph between modules...").
+
+---
 
 ## Step 1: Read the Template
 
@@ -30,7 +35,7 @@ cat .rivet/systems.yaml
 
 ## Step 2: Analyze the Codebase with TLDR
 
-Use TLDR to understand the codebase structure and relationships.
+TLDR performs static analysis to understand code structure and relationships.
 
 **Key issue:** TLDR defaults to Python. For TypeScript projects, you **must** specify \`--lang typescript\`.
 
